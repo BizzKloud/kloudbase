@@ -4,19 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -25,13 +24,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import junit.framework.Test;
-
-import org.w3c.dom.Document;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class VenHome extends Activity {
 
@@ -46,6 +40,7 @@ public class VenHome extends Activity {
 
     //Initilization
     TextView textViewVenName;
+    Intent intent;
     TextView textViewfdname;
     TextView textViewTaxCount;
     TextView textViewCatCount;
@@ -54,8 +49,11 @@ public class VenHome extends Activity {
     ArrayList<HashMap> categoryArr;
     ArrayList<ArrayList <HashMap> > foodItemArr;
     ArrayList<HashMap> taxArr;
+    GridLayout grid;
     int countCat = 0;
     int countFdItem = 0;
+    boolean getCatIdVar = false;
+    int index = 0;
 
 
     @Override
@@ -86,6 +84,7 @@ public class VenHome extends Activity {
 
 
         //Initializations
+        grid = findViewById(R.id.grid);
         textViewfdname = (TextView) findViewById(R.id.textViewfdname);
         textViewVenName = (TextView) findViewById(R.id.textViewVenName);
         textViewTaxCount = (TextView) findViewById(R.id.textViewTaxCount);
@@ -95,11 +94,6 @@ public class VenHome extends Activity {
         categoryArr = new ArrayList<HashMap>();
         taxArr = new ArrayList<HashMap>();
         foodItemArr = new ArrayList<ArrayList<HashMap>>();
-        final Integer count = 0;
-
-
-
-
 
 
 
@@ -112,16 +106,43 @@ public class VenHome extends Activity {
 
 
 
-
         //Setting basic terms
         textViewVenName.setText(venName);
         textViewfdname.setText(fdName);
 
 
+        //Setting Card click listner
+        setCardEvent();
 
 
     } //OnCreate Done
 
+    private void setCardEvent() {
+        for(int i=0; i<grid.getChildCount(); i++) {
+            CardView cardView = (CardView) grid.getChildAt(i);
+            final int finalI = i;
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switch(finalI) {
+                        case 0:
+                            intent = new Intent(VenHome.this, TaxDetails.class);
+                            startActivity(intent);
+                            break;
+                        case 1:
+                            intent = new Intent(VenHome.this, CategoryList.class);
+                            startActivity(intent);
+                            break;
+                        case 2:
+                            intent = new Intent(VenHome.this, FdSelectCatList.class);
+                            startActivity(intent);
+                            break;
+                    }
+                }
+            });
+        }
+    }
 
 
     private class AsysncTask extends AsyncTask<String , Void, Void> implements com.example.smahadik.kloudbase.GetFcAsysncTask {
@@ -130,8 +151,12 @@ public class VenHome extends Activity {
         protected Void doInBackground(final String... strings) {
 
             catPathRef.orderBy("catpos").addSnapshotListener(new EventListener<QuerySnapshot>() {
+
                 @Override
                 public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                    categoryArr.clear();
+                    foodItemArr.clear();
+                    Log.i("Asysnc Task" , "Running AsysnscTask CAtegory");
                     countCat = 0;
                     countFdItem = 0;
 
@@ -142,26 +167,54 @@ public class VenHome extends Activity {
 
                     for(QueryDocumentSnapshot cat : queryDocumentSnapshots) {
                         countCat++;
-
                         categoryArr.add((HashMap) cat.getData());
-                        String catid = cat.getString("catid");
+                        final String catid = cat.getString("catid");
                         String menuPath = strings[0] + "/" +  catid + "/MenuM";
                         final CollectionReference fditem = firestoreRef.collection(menuPath);
-                        final ArrayList<HashMap> sample = new ArrayList<HashMap>();
+//                        final ArrayList<HashMap> sample = new ArrayList<HashMap>();
 
 
                         fditem.orderBy("fspos").addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                                countCat++;
+
+//                                Log.i("cat count fditem" , String.valueOf(countCat));
+//                                Log.i("Cat Array count fditem" , String.valueOf(categoryArr.size()));
+//                                Log.i("Asysnc Task" , "Running AsysnscTask FooDITE");
+                                getCatIdVar = false;
+                                final ArrayList<HashMap> sample = new ArrayList<HashMap>();
                                 for(QueryDocumentSnapshot fdItem : queryDocumentSnapshots) {
-                                    countFdItem++;
-                                    sample.add((HashMap) fdItem.getData());
+//                                        Log.i("CatID " , String.valueOf(fdItem.get("catid")));
+
+                                    if (!getCatIdVar) {
+                                        for(HashMap cat : categoryArr) {
+                                            if (cat.get("catid").toString().equals((String)fdItem.get("catid")) & !getCatIdVar ) {
+//                                                Log.i("CAtegory ID" , "FOUND .....");
+                                                index = categoryArr.indexOf(cat);
+//                                                Log.i("index" , String.valueOf(index));
+                                                getCatIdVar = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                        sample.add((HashMap) fdItem.getData());
                                 }
-//                                sample.size()
-                                foodItemArr.add(sample);
-//                                Log.i("items count" , String.valueOf(countFdItem));
-                                textViewFdItemCount.setText("Count : " + countFdItem);
+
+                                if(foodItemArr.size() > index) {
+//                                    Log.i("Second" , "True");
+                                    countFdItem = countFdItem + (sample.size() - foodItemArr.get(index).size());
+                                    foodItemArr.set(index, sample);
+
+                                }else {
+//                                    Log.i("First" , "True");
+                                    countFdItem = countFdItem + sample.size();
+                                    foodItemArr.add(sample);
+                                }
+
+//                                    Log.i("items count" , String.valueOf(countFdItem));
+//                                    Log.i("items Array size" , String.valueOf(foodItemArr.size()));
+//                                    Log.i("items Array" , foodItemArr.toString());
+                                    textViewFdItemCount.setText("Count : " + countFdItem);
 
                             }
                         });
@@ -170,6 +223,7 @@ public class VenHome extends Activity {
 
                     textViewCatCount.setText("Count : " + countCat);
 //                    Log.i("cat count" , String.valueOf(countCat));
+//                    Log.i("Cat Array count" , String.valueOf(categoryArr.size()));
 //                    Log.i("cat Array" , categoryArr.toString());
 //                    Log.i("fd Array" , foodItemArr.toString());
                 }
@@ -177,8 +231,10 @@ public class VenHome extends Activity {
 
 
             taxMRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+
                 @Override
                 public void onEvent(@javax.annotation.Nullable QuerySnapshot taxqueryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                    taxArr.clear();
                     for(QueryDocumentSnapshot taxItem : taxqueryDocumentSnapshots) {
                         taxArr.add((HashMap) taxItem.getData());
                     }

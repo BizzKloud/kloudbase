@@ -1,19 +1,13 @@
 package com.example.smahadik.kloudbase;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,31 +22,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public class login extends AppCompatActivity {
 
     // Firestore
     FirebaseFirestore firestore;
     CollectionReference db;
-    FirebaseAuth mAuth;
 
     // Initialization
     ArrayList<HashMap> foodCourtArr = new ArrayList<HashMap>();
@@ -93,8 +77,6 @@ public class login extends AppCompatActivity {
         db = FirebaseFirestore.getInstance().collection("foodcourts");
 
 
-
-
         //Initialization
         passEditText = (EditText) findViewById(R.id.passEditText);
         foodcourtSpnr = (Spinner) findViewById(R.id.foodcourt);
@@ -104,7 +86,11 @@ public class login extends AppCompatActivity {
         admin = (TextView) findViewById(R.id.admin);
         vendor = (TextView) findViewById(R.id.vendor);
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
+        inAnimation = new AlphaAnimation(0f, 1f);
+        inAnimation.setDuration(200);
+        outAnimation = new AlphaAnimation(1f, 0f);
+        outAnimation.setDuration(200);
 
 
         // getting data from firestore
@@ -281,23 +267,18 @@ public class login extends AppCompatActivity {
     // AsyncTask FireStore
     private class AsysncTask extends AsyncTask<String , Void, Void> implements com.example.smahadik.kloudbase.GetFcAsysncTask {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            inAnimation = new AlphaAnimation(0f, 1f);
-            inAnimation.setDuration(200);
-            progressBarHolder.setAnimation(inAnimation);
-            progressBarHolder.setVisibility(View.VISIBLE);
-            login.setEnabled(false);
-        }
-
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            EnableProgressBar();
+//            login.setEnabled(false);
+//        }
+//
 //        @Override
 //        protected void onPostExecute(Void aVoid) {
 //            super.onPostExecute(aVoid);
-//            outAnimation = new AlphaAnimation(1f, 0f);
-//            outAnimation.setDuration(200);
-//            progressBarHolder.setAnimation(outAnimation);
-//            progressBarHolder.setVisibility(View.GONE);
+//            DisableProgressBar();
+//            login.setEnabled(true);
 //        }
 
 
@@ -344,20 +325,27 @@ public class login extends AppCompatActivity {
     //ONclick LOGIN
     public void login (View view) {
 
-//        inAnimation = new AlphaAnimation(0f, 1f);
-//        inAnimation.setDuration(200);
-//        progressBarHolder.setAnimation(inAnimation);
-//        progressBar.setVisibility(View.VISIBLE);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        Common.EnableProgressBar(progressBarHolder, inAnimation);
+        login.setEnabled(false);
 
         String password = passEditText.getText().toString().trim();
-        if(foodcourtSpnr.getSelectedItem() == "Food Court") {
+        if(foodcourtSpnr.getSelectedItem() == "Select Food Court") {
+            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            login.setEnabled(true);
             Toast.makeText(this, "Select 'FoodCourt' ", Toast.LENGTH_LONG).show();
-        }else if (usernameSpr.getSelectedItem() == "User Name") {
+        }
+        else if (usernameSpr.getSelectedItem() == "Select User Name") {
+            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            login.setEnabled(true);
             Toast.makeText(this, "Select 'User Name' ", Toast.LENGTH_LONG).show();
-        }else if(password.equals("")) {
+        }
+        else if(password.equals("")) {
+            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            login.setEnabled(true);
             Toast.makeText(this, "Enter Password", Toast.LENGTH_LONG).show();
-        }else {
+        }
+        else {
+
             if(password.equals(passcode)) {
                 Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
                 Intent venHome = new Intent(this, VenHome.class);
@@ -365,10 +353,14 @@ public class login extends AppCompatActivity {
                 venHome.putExtra("venName", usernameSpr.getSelectedItem().toString());
                 venHome.putExtra("db" , usersPath + "/" + venid );
                 venHome.putExtra("vendorDetails" , usersArr.get(pos));
+                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                login.setEnabled(true);
                 startActivity(venHome);
                 finish();
 
             }else {
+                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                login.setEnabled(true);
                 Toast.makeText(this, "Invalid Login Credentials", Toast.LENGTH_LONG).show();
             }
         }

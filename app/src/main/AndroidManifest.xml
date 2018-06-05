@@ -16,7 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".VenHome"></activity>
+        <activity android:name=".VenHome" />
+        <activity android:name=".TaxDetails" />
+        <activity android:name=".CategoryList" />
+        <activity android:name=".FdSelectCatList"></activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
