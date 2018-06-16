@@ -1,6 +1,5 @@
 package com.example.smahadik.kloudbase;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -9,43 +8,45 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+public class FdItemDetails extends AppCompatActivity {
 
-public class TaxDetails extends AppCompatActivity {
+    public static int position;
 
     public static final String STATUS = "status";
-    ExpandableListAdapter taxDetailsAdapter;
-    ExpandableListView taxDetailsListView;
+    ExpandableListAdapterFdItem fdItemDetailsAdapter;
+    ExpandableListView fdItemDetailsListView;
     Button edit;
-    List<String> listDataHeader;
+    public static List<String> listDataHeader;
     LinkedHashMap<String, List<String>> listDataChildLabel;
     LinkedHashMap<String, List<String>> listDataChildValue;
     ArrayList<List<String>> dataListArr;
     ArrayList<List<String>> valueListArr;
     List<String> sample;
     List<String> sampleValue;
-    int previousGroup = -1;
-    Intent editTaxDetails;
+    public static int previousGroup = -1;
+    Intent editfdItemDetails;
 
     FrameLayout progressBarHolder;
     ProgressBar progressBar;
@@ -56,7 +57,13 @@ public class TaxDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tax_details);
+        setContentView(R.layout.activity_fd_item_details);
+
+
+        Intent FdSelectCatList = getIntent();
+        position = FdSelectCatList.getIntExtra("position" , -1);
+        getSupportActionBar().setTitle(VenHome.categoryArr.get(position).get("name").toString());
+
 
         //Initialization
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
@@ -67,27 +74,49 @@ public class TaxDetails extends AppCompatActivity {
         outAnimation.setDuration(200);
 
 
-
         // get the listview
-        taxDetailsListView = (ExpandableListView) findViewById(R.id.taxDetailsView);
+        fdItemDetailsListView= (ExpandableListView) findViewById(R.id.fdDetailsView);
 
 
-        taxDetailsListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+        fdItemDetailsListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
             @Override
             public void onGroupExpand(int groupPosition) {
+
                 if(groupPosition != previousGroup)
-                    taxDetailsListView.collapseGroup(previousGroup);
+                    fdItemDetailsListView.collapseGroup(previousGroup);
+
                 previousGroup = groupPosition;
             }
         });
 
 
-
-
-
-
     }
+
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//
+//        MenuInflater catMenu = getMenuInflater();
+//        catMenu.inflate(R.menu.cat_menu, menu );
+//        return true;
+////        return super.onCreateOptionsMenu(menu);
+//    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        if(item.getItemId() == R.id.addNewCategory) {
+//            Intent addNewCat = new Intent(CategoryDetails.this, AddNewCategory.class);
+//            startActivity(addNewCat);
+//        }else if(item.getItemId() == R.id.catPositioning) {
+//            Intent catreorder = new Intent(CategoryDetails.this, CatOrganize.class);
+//            startActivity(catreorder);
+//        }
+//
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
 
@@ -96,22 +125,25 @@ public class TaxDetails extends AppCompatActivity {
         super.onResume();
 
         // preparing list data
+//        Log.i("Header" , String.valueOf(VenHome.foodItemArr.get(position).size()) );
+//        Log.i("Header" , VenHome.foodItemArr.get(position).toString() );
         prepareListData();
 
         // setting list adapter
-        taxDetailsAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChildLabel, listDataChildValue);
+        fdItemDetailsAdapter = new ExpandableListAdapterFdItem(this, listDataHeader, listDataChildLabel, listDataChildValue);
         Log.i("RESUMED" , listDataChildValue.toString());
         Log.i("RESUMED" , listDataHeader.toString());
-        taxDetailsListView.setAdapter(taxDetailsAdapter);
+        fdItemDetailsListView.setAdapter(fdItemDetailsAdapter);
 
 
     };
 
-    public void edit (View view) {
-        editTaxDetails = new Intent(this, EditTaxDetails.class);
-        editTaxDetails.putExtra("editPosition", previousGroup);
-        startActivity(editTaxDetails);
 
+
+    public void edit (View view) {
+        editfdItemDetails = new Intent(this, EditFdItemDetails.class);
+        editfdItemDetails.putExtra("editPosition", previousGroup);
+        startActivity(editfdItemDetails);
     }
 
 
@@ -124,15 +156,15 @@ public class TaxDetails extends AppCompatActivity {
         } else {
             builder = new AlertDialog.Builder(this);
         }
-        builder.setTitle("Delete " + listDataHeader.get(previousGroup))
-                .setMessage("Are you sure you want to Delete " + listDataHeader.get(previousGroup) + " ?")
+        builder.setTitle("Delete FoodItem")
+                .setMessage("Are you sure you want to Delete this FoodItem ?")
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
                         Common.EnableProgressBar(progressBarHolder, inAnimation);
 
-                        DocumentReference catDoc = VenHome.taxMRef.document(VenHome.taxArr.get(previousGroup).get("taxid").toString());
-                        catDoc.update(STATUS, false).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        DocumentReference fdItemDoc = VenHome.catPathRef.document(VenHome.categoryArr.get(position).get("catid").toString() + "/MenuM/" + VenHome.foodItemArr.get(position).get(previousGroup).get("fdid").toString() );
+                        fdItemDoc.update(STATUS , false).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Common.DisableProgressBar(progressBarHolder, outAnimation);
@@ -154,7 +186,10 @@ public class TaxDetails extends AppCompatActivity {
 
 
 
-//    Preparing the list data
+
+
+
+    //    Preparing the list data
     public void prepareListData() {
         listDataHeader = new ArrayList<String>();
         listDataChildLabel = new LinkedHashMap<String, List<String>>();
@@ -163,23 +198,32 @@ public class TaxDetails extends AppCompatActivity {
         valueListArr = new ArrayList<List<String>>();
 
         // Adding child data
-        for (int i=0; i<VenHome.taxArr.size(); i++) {
-            listDataHeader.add(VenHome.taxArr.get(i).get("taxName").toString());
+        for (int i=0; i<VenHome.foodItemArr.get(position).size(); i++) {
+//            Log.i("Header" , VenHome.foodItemArr.get(position).get(i).get("name").toString() );
+            listDataHeader.add(VenHome.foodItemArr.get(position).get(i).get("name").toString());
         }
 
         // Adding Header / child data with Label
-        for (int i=0; i<VenHome.taxArr.size(); i++) {
+        for (int i=0; i<VenHome.foodItemArr.get(position).size(); i++) {
             sample = new ArrayList<String>();
             sampleValue = new ArrayList<String>();
 
-            sample.add("Description : ");
             sample.add("Name : " );
-            sample.add("Percentage : ");
+            sample.add("Amount : " );
+            sample.add("Short Desp : ");
+            sample.add("Long Desp : ");
+            sample.add("Category  : ");
+            sample.add("Ratings : ");
+            sample.add("Position : ");
             sample.add("Edit");
 
-            sampleValue.add(VenHome.taxArr.get(i).get("desp").toString());
-            sampleValue.add(VenHome.taxArr.get(i).get("taxName").toString());
-            sampleValue.add(VenHome.taxArr.get(i).get("taxPer").toString());
+            sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("name").toString());
+            sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("amount").toString());
+            sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("sdesp").toString());
+            sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("ldesp").toString());
+            sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("category").toString());
+            sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("rating").toString());
+            sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("fspos").toString());
             sampleValue.add("Edit");
 
             dataListArr.add(sample);
@@ -200,7 +244,6 @@ public class TaxDetails extends AppCompatActivity {
 
 
 
+
+
 }
-
-
-

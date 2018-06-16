@@ -1,29 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.smahadik.kloudbase">
+    package="com.example.smahadik.kloudbase"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".login">
+        android:supportsRtl="true">
+        <activity
+            android:name=".login"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".VenHome" />
-        <activity android:name=".TaxDetails" />
-        <activity android:name=".CategoryList" />
-        <activity android:name=".FdSelectCatList"></activity>
+        <activity
+            android:name=".VenHome"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TaxDetails"
+            android:label="Tax Detils"
+            android:theme="@style/AppThemeTitle" />
+        <activity
+            android:name=".CategoryDetails"
+            android:label="Categories"
+            android:theme="@style/AppThemeTitle" />
+        <activity
+            android:name=".FdSelectCatList"
+            android:label="Category List"
+            android:theme="@style/AppThemeTitle" />
+        <activity
+            android:name=".EditTaxDetails"
+            android:theme="@style/AppThemeTitle" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <activity
+            android:name=".EditCategoryDetails"
+            android:theme="@style/AppThemeTitle" />
+        <activity
+            android:name=".AddNewCategory"
+            android:theme="@style/AppThemeTitle" />
+        <activity
+            android:name=".CatOrganize"
+            android:theme="@style/AppThemeTitle" />
+        <activity
+            android:name=".FdItemDetails"
+            android:theme="@style/AppThemeTitle" />
+        <activity
+            android:name=".EditFdItemDetails"
+            android:theme="@style/AppThemeTitle" />
+
     </application>
 
-</manifest>
+</manifest> <!-- android:theme="@style/AppTheme"> -->

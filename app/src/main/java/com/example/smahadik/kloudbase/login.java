@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -35,8 +36,9 @@ import java.util.HashMap;
 public class login extends AppCompatActivity {
 
     // Firestore
-    FirebaseFirestore firestore;
-    CollectionReference db;
+    public static FirebaseFirestore firestore;
+    public static CollectionReference db;
+
 
     // Initialization
     ArrayList<HashMap> foodCourtArr = new ArrayList<HashMap>();
@@ -44,9 +46,10 @@ public class login extends AppCompatActivity {
     ArrayList<String> fcNames = new ArrayList<String>();
     ArrayList<String> userNames = new ArrayList<String>();
     String foodcourtsPath = "foodcourts";
-    String usersPath;
-    String fcid;
-    String venid;
+    public static String fcid;
+    public static String venid;
+    public  static String usersPath;
+
     String passcode;
     Spinner foodcourtSpnr;
     Spinner usernameSpr;
@@ -59,7 +62,8 @@ public class login extends AppCompatActivity {
     ProgressBar progressBar;
     AlphaAnimation inAnimation;
     AlphaAnimation outAnimation;
-    int pos;
+    int posVen;
+    int posfc;
 
 
     @Override
@@ -70,9 +74,7 @@ public class login extends AppCompatActivity {
 
         // FireStore Settings
         firestore = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setTimestampsInSnapshotsEnabled(true).build();
         firestore.setFirestoreSettings(settings);
         db = FirebaseFirestore.getInstance().collection("foodcourts");
 
@@ -144,6 +146,7 @@ public class login extends AppCompatActivity {
                     userNames.clear();
                     userNames.add("Select User Name");
                     usersArr.clear();
+                    posfc = position-1;
                     fcid = foodCourtArr.get(position-1).get("fcid").toString();
                     usersPath = foodcourtsPath + "/" + fcid +"/VendorM";
                     new AsysncTask().execute(usersPath);
@@ -173,7 +176,7 @@ public class login extends AppCompatActivity {
                 }
                 if(position > 0) {
                     passEditText.setText("");
-                    pos = position-1;
+                    posVen = position-1;
                     venid = usersArr.get(position-1).get("venid").toString();
                     passcode = usersArr.get(position-1).get("pwd").toString();
                     passEditText.setEnabled(true);
@@ -323,11 +326,11 @@ public class login extends AppCompatActivity {
 
 
     //ONclick LOGIN
-    public void login (View view) {
+    public void loginAttempt (View view) {
 
         Common.EnableProgressBar(progressBarHolder, inAnimation);
         login.setEnabled(false);
-
+        Log.i("Login" , "Clicked");
         String password = passEditText.getText().toString().trim();
         if(foodcourtSpnr.getSelectedItem() == "Select Food Court") {
             Common.DisableProgressBar(progressBarHolder, outAnimation);
@@ -347,12 +350,13 @@ public class login extends AppCompatActivity {
         else {
 
             if(password.equals(passcode)) {
+                Log.i("Login" , "Clicked");
                 Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
                 Intent venHome = new Intent(this, VenHome.class);
-                venHome.putExtra("fdName", foodcourtSpnr.getSelectedItem().toString());
+                venHome.putExtra("fc", foodCourtArr.get(posfc));
                 venHome.putExtra("venName", usernameSpr.getSelectedItem().toString());
                 venHome.putExtra("db" , usersPath + "/" + venid );
-                venHome.putExtra("vendorDetails" , usersArr.get(pos));
+                venHome.putExtra("vendorDetails" , usersArr.get(posVen));
                 Common.DisableProgressBar(progressBarHolder, outAnimation);
                 login.setEnabled(true);
                 startActivity(venHome);

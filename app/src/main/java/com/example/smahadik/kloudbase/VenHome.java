@@ -1,16 +1,16 @@
+
 package com.example.smahadik.kloudbase;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -27,28 +27,31 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class VenHome extends Activity {
+public class VenHome extends AppCompatActivity {
 
     // Firestore
-    FirebaseStorage storage;
-    StorageReference storageRef;
+    public static FirebaseStorage storage;
+    public static StorageReference storageRef;
     StorageReference storageRefLogo;
     FirebaseFirestore firestoreRef;
-    CollectionReference catPathRef;
-    DocumentReference vendorRef;
-    CollectionReference taxMRef;
+    public static DocumentReference vendorRef;
+    public static CollectionReference taxMRef;
+    public static CollectionReference catPathRef;
+
 
     //Initilization
-    TextView textViewVenName;
+//    TextView textViewVenName;
     Intent intent;
-    TextView textViewfdname;
+    public static HashMap fcDetails;
+    public static HashMap vendorDetails;
+    //    TextView textViewfdname;
     TextView textViewTaxCount;
     TextView textViewCatCount;
     TextView textViewFdItemCount;
     ImageView venLogo;
-    ArrayList<HashMap> categoryArr;
-    ArrayList<ArrayList <HashMap> > foodItemArr;
-    ArrayList<HashMap> taxArr;
+    public static ArrayList<HashMap> categoryArr;
+    public static ArrayList<ArrayList <HashMap> > foodItemArr;
+    public static ArrayList<HashMap> taxArr;
     GridLayout grid;
     int countCat = 0;
     int countFdItem = 0;
@@ -56,18 +59,23 @@ public class VenHome extends Activity {
     int index = 0;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ven_home);
 
+
         Intent login = getIntent();
-        String fdName = login.getStringExtra("fdName");
         String venName = login.getStringExtra("venName");
         String path = login.getStringExtra("db");
         String catPath = path + "/CategoryM";
-        HashMap vendorDetails = (HashMap) login.getSerializableExtra("vendorDetails");
+        vendorDetails = (HashMap) login.getSerializableExtra("vendorDetails");
+        fcDetails = (HashMap) login.getSerializableExtra("fc");
         vendorDetails.get("pic");
+
+//        getSupportActionBar().setTitle(venName);
 
 
         // FireStore Settings
@@ -85,8 +93,8 @@ public class VenHome extends Activity {
 
         //Initializations
         grid = findViewById(R.id.grid);
-        textViewfdname = (TextView) findViewById(R.id.textViewfdname);
-        textViewVenName = (TextView) findViewById(R.id.textViewVenName);
+//        textViewfdname = (TextView) findViewById(R.id.textViewfdname);
+//        textViewVenName = (TextView) findViewById(R.id.textViewVenName);
         textViewTaxCount = (TextView) findViewById(R.id.textViewTaxCount);
         textViewCatCount = (TextView) findViewById(R.id.textViewCatCount);
         textViewFdItemCount = (TextView) findViewById(R.id.textViewFdItemCount);
@@ -107,8 +115,8 @@ public class VenHome extends Activity {
 
 
         //Setting basic terms
-        textViewVenName.setText(venName);
-        textViewfdname.setText(fdName);
+//        textViewVenName.setText(venName);
+//        textViewfdname.setText(fdName);
 
 
         //Setting Card click listner
@@ -131,7 +139,7 @@ public class VenHome extends Activity {
                             startActivity(intent);
                             break;
                         case 1:
-                            intent = new Intent(VenHome.this, CategoryList.class);
+                            intent = new Intent(VenHome.this, CategoryDetails.class);
                             startActivity(intent);
                             break;
                         case 2:
@@ -150,13 +158,13 @@ public class VenHome extends Activity {
         @Override
         protected Void doInBackground(final String... strings) {
 
-            catPathRef.orderBy("catpos").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            catPathRef.whereEqualTo("status" , true).addSnapshotListener(new EventListener<QuerySnapshot>() {
 
                 @Override
                 public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
                     categoryArr.clear();
                     foodItemArr.clear();
-                    Log.i("Asysnc Task" , "Running AsysnscTask CAtegory");
+                    Log.i("Asysnc Task" , "Running AsysnscTask Category");
                     countCat = 0;
                     countFdItem = 0;
 
@@ -174,7 +182,7 @@ public class VenHome extends Activity {
 //                        final ArrayList<HashMap> sample = new ArrayList<HashMap>();
 
 
-                        fditem.orderBy("fspos").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        fditem.whereEqualTo("status" , true).addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
@@ -197,40 +205,40 @@ public class VenHome extends Activity {
                                             }
                                         }
                                     }
-                                        sample.add((HashMap) fdItem.getData());
+                                    sample.add((HashMap) fdItem.getData());
                                 }
 
                                 if(foodItemArr.size() > index) {
-//                                    Log.i("Second" , "True");
                                     countFdItem = countFdItem + (sample.size() - foodItemArr.get(index).size());
                                     foodItemArr.set(index, sample);
 
                                 }else {
-//                                    Log.i("First" , "True");
+                                    Log.i("First" , "True");
                                     countFdItem = countFdItem + sample.size();
                                     foodItemArr.add(sample);
                                 }
 
 //                                    Log.i("items count" , String.valueOf(countFdItem));
 //                                    Log.i("items Array size" , String.valueOf(foodItemArr.size()));
-//                                    Log.i("items Array" , foodItemArr.toString());
-                                    textViewFdItemCount.setText("Count : " + countFdItem);
+                                    Log.i("items Array" , foodItemArr.toString());
+                                textViewFdItemCount.setText(String.valueOf(countFdItem));
 
                             }
                         });
 
                     }
 
-                    textViewCatCount.setText("Count : " + countCat);
+                    textViewCatCount.setText(String.valueOf(countCat));
 //                    Log.i("cat count" , String.valueOf(countCat));
 //                    Log.i("Cat Array count" , String.valueOf(categoryArr.size()));
-//                    Log.i("cat Array" , categoryArr.toString());
-//                    Log.i("fd Array" , foodItemArr.toString());
+                    Log.i("cat Array" , categoryArr.toString());
+                    Log.i("fd Array" , foodItemArr.toString());
                 }
             });
 
 
-            taxMRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+
+            taxMRef.whereEqualTo("status" , true).addSnapshotListener(new EventListener<QuerySnapshot>() {
 
                 @Override
                 public void onEvent(@javax.annotation.Nullable QuerySnapshot taxqueryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
@@ -239,8 +247,8 @@ public class VenHome extends Activity {
                         taxArr.add((HashMap) taxItem.getData());
                     }
 
-                    textViewTaxCount.setText("Count : " + taxArr.size());
-//                    Log.i("TaxArray" , taxArr.toString());
+                    textViewTaxCount.setText(String.valueOf(taxArr.size()));
+                    Log.i("TaxArray" , taxArr.toString());
                 }
             });
 
@@ -254,3 +262,5 @@ public class VenHome extends Activity {
 
 
 }
+
+

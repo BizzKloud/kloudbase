@@ -8,6 +8,15 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppThemeTitle" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/libre_baskerville</item>
+        <item name="colorPrimary">@android:color/holo_orange_dark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:titleTextColor">@android:color/white</item>
+    </style>
+
     <style name="spinner_style">
         <item name="android:background">@drawable/gradient_spinner</item>
         <item name="android:popupBackground">#DFFFFFFF</item>
@@ -17,15 +26,41 @@
         <item name="android:background">@drawable/gradient_password</item>
     </style>
 
-    <style name="button_style" >
-        <item name="android:background">@drawable/gradient_login</item>
-        <item name="android:colorBackground">#ffff8800</item>
+    <style name="login_button" >
+        <item name="android:background">@drawable/login_button</item>
+    </style>
+
+    <style name="edit_button" >
+        <item name="android:background">@drawable/edit_button</item>
+    </style>
+
+    <style name="delete_button" >
+        <item name="android:background">@drawable/delete_button</item>
     </style>
 
     <style name="titlebar_style" >
         <item name="android:background">@android:color/holo_orange_dark</item>
     </style>
 
+    <style name="expandableListView_style" >
+        <item name="android:background">@drawable/expandablelistview</item>
+    </style>
+
+    <style name="textLable_style" >
+        <item name="android:background" >@drawable/textlable</item>
+    </style>
+
+    <style name="textValue_style" >
+        <item name="android:background" >@drawable/textvalue</item>
+    </style>
+
+    <style name="cancel_button" >
+        <item name="android:background">@drawable/cancel_button</item>
+    </style>
+
+    <style name="save_button" >
+        <item name="android:background">@drawable/save_button</item>
+    </style>
 
 </resources>
 <!--<item name="android:layout_height">35dp</item>-->
