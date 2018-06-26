@@ -93,30 +93,30 @@ public class FdItemDetails extends AppCompatActivity {
 
     }
 
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//
-//        MenuInflater catMenu = getMenuInflater();
-//        catMenu.inflate(R.menu.cat_menu, menu );
-//        return true;
-////        return super.onCreateOptionsMenu(menu);
-//    }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//
-//        if(item.getItemId() == R.id.addNewCategory) {
-//            Intent addNewCat = new Intent(CategoryDetails.this, AddNewCategory.class);
-//            startActivity(addNewCat);
-//        }else if(item.getItemId() == R.id.catPositioning) {
-//            Intent catreorder = new Intent(CategoryDetails.this, CatOrganize.class);
-//            startActivity(catreorder);
-//        }
-//
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater catMenu = getMenuInflater();
+        catMenu.inflate(R.menu.fd_item_menu, menu );
+        return true;
+//        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId() == R.id.addFdItem) {
+            Intent addNewFdItem = new Intent(FdItemDetails.this, AddNewFdItem.class);
+            startActivity(addNewFdItem);
+        }else if(item.getItemId() == R.id.fdItemPositioning) {
+            Intent fditempositioning = new Intent(FdItemDetails.this, FdItemOrganize.class);
+            startActivity(fditempositioning);
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
 
@@ -208,6 +208,7 @@ public class FdItemDetails extends AppCompatActivity {
             sample = new ArrayList<String>();
             sampleValue = new ArrayList<String>();
 
+            sample.add("Image : " );
             sample.add("Name : " );
             sample.add("Amount : " );
             sample.add("Short Desp : ");
@@ -217,6 +218,7 @@ public class FdItemDetails extends AppCompatActivity {
             sample.add("Position : ");
             sample.add("Edit");
 
+            sampleValue.add("Image");
             sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("name").toString());
             sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("amount").toString());
             sampleValue.add(VenHome.foodItemArr.get(position).get(i).get("sdesp").toString());

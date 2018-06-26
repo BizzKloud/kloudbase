@@ -72,6 +72,7 @@ public class login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+
         // FireStore Settings
         firestore = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setTimestampsInSnapshotsEnabled(true).build();
@@ -110,10 +111,10 @@ public class login extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    initialRestart(admin, vendor);
+                    initialRestart(admin, vendor , true);
                 }else {
 
-                    initialRestart(vendor, admin);
+                    initialRestart(vendor, admin, false);
                 }
             }
         });
@@ -249,11 +250,19 @@ public class login extends AppCompatActivity {
 
 
     // Initial Restart For Switch
-    public void initialRestart (TextView checked, TextView unChecked) {
-        checked.setTextColor(Color.parseColor("#ffff8800"));
-        checked.setTextSize(22);
-        unChecked.setTextColor(Color.parseColor("#aaaaaa"));
-        unChecked.setTextSize(20);
+    public void initialRestart (TextView checked, TextView unChecked, boolean flag) {
+
+        if(flag) {
+            checked.setTextColor(Color.parseColor("#FF334774"));
+            checked.setTextSize(18);
+            unChecked.setTextColor(Color.parseColor("#aaaaaa"));
+            unChecked.setTextSize(14);
+        }else {
+            checked.setTextColor(Color.parseColor("#FFFF8800"));
+            checked.setTextSize(18);
+            unChecked.setTextColor(Color.parseColor("#aaaaaa"));
+            unChecked.setTextSize(14);
+        }
 
         passEditText.setEnabled(false);
         usernameSpr.setEnabled(false);
@@ -268,7 +277,7 @@ public class login extends AppCompatActivity {
 
 
     // AsyncTask FireStore
-    private class AsysncTask extends AsyncTask<String , Void, Void> implements com.example.smahadik.kloudbase.GetFcAsysncTask {
+    private class AsysncTask extends AsyncTask<String , Void, Void> {
 
 //        @Override
 //        protected void onPreExecute() {

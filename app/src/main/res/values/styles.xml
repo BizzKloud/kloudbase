@@ -6,6 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="colorControlNormal">@android:color/holo_orange_dark</item>-->
+        <item name="android:color">#ffff8800</item>
+        <item name="colorControlActivated">@color/bizzblue</item>
+        <item name="android:colorForeground">#ffff8800</item>
+        <!--<item name="android:colorControlHighlight">#ffff8800</item>-->
     </style>
 
     <style name="AppThemeTitle" parent="Theme.AppCompat.DayNight.DarkActionBar">
@@ -14,7 +19,16 @@
         <item name="colorPrimary">@android:color/holo_orange_dark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:titleTextColor">@android:color/white</item>
+        <!--<item name="android:textStyle">bold</item>-->
+        <item name="android:color">#ffff8800</item>
+        <item name="colorControlActivated">@color/bizzblue</item>
+        <!--<item name="android:colorForeground">#ffff8800</item>-->
+        <item name="android:colorControlHighlight">#ffff8800</item>
+        <item name="android:titleTextStyle">@style/toolbar_title_bold</item>
+    </style>
+
+    <style name="logo_sytle" >
+        <item name="android:background">@drawable/logo_style</item>
     </style>
 
     <style name="spinner_style">
@@ -62,10 +76,13 @@
         <item name="android:background">@drawable/save_button</item>
     </style>
 
+
+    <style name="toolbar_title_bold"  parent="Theme.AppCompat.DayNight.DarkActionBar" >
+         <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>
-<!--<item name="android:layout_height">35dp</item>-->
-<!--<item name="android:layout_margin">10dp</item>-->
-<!--<item name="android:paddingLeft">8dp</item>-->
-<!--<item name="android:paddingRight">20dp</item>-->
-<!--<item name="android:paddingTop">5dp</item>-->
-<!--<item name="android:paddingBottom">5dp</item>-->
+
+
+    <!--@font/open_sans_light , @font/libre_baskerville-->

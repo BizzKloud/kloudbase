@@ -18,33 +18,17 @@
     <!--app:layout_constraintVertical_bias="0.0">-->
 
 
-    <TextView
-        android:id="@+id/appName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
-        android:text="KloudBase"
-        android:textColor="@android:color/holo_orange_dark"
-        android:textColorHighlight="@android:color/holo_orange_dark"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login" />
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="210dp"
         android:layout_height="60dp"
         android:layout_below="@+id/appName"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="56dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appName"
+        app:layout_constraintTop_toBottomOf="@+id/login"
         app:srcCompat="@drawable/logo" />
 
 
@@ -53,26 +37,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/imageView"
-        android:layout_marginTop="30dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="16dp"
         android:shadowColor="@android:color/holo_orange_light"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.762"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/admin"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:checked="false" />
 
     <TextView
         android:id="@+id/vendor"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/aswitch"
         android:layout_alignBottom="@+id/aswitch"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="20dp"
         android:layout_toEndOf="@+id/aswitch"
         android:text="Vendor"
         android:textAlignment="center"
         android:textColor="@android:color/holo_orange_dark"
-        android:textSize="24sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/aswitch"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -90,47 +74,85 @@
     <TextView
         android:id="@+id/admin"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/aswitch"
         android:layout_alignBottom="@+id/aswitch"
-        android:layout_marginTop="26dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="20dp"
         android:layout_toEndOf="@+id/aswitch"
         android:text="Admin"
         android:textAlignment="center"
         android:textColor="@android:color/darker_gray"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/aswitch"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/appName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:weightSum="2"
+        app:layout_constraintTop_toBottomOf="@+id/aswitch">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:gravity="end"
+            android:text="Kloud"
+            android:textAlignment="textEnd"
+            android:textColor="@color/bizzblue"
+            android:textColorHighlight="@android:color/holo_orange_dark"
+            android:textSize="40sp"
+            app:layout_constraintTop_toBottomOf="@+id/aswitch" />
+
+
+        <TextView
+            android:id="@+id/appName2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:gravity="start"
+            android:text="Base"
+            android:textAlignment="textStart"
+            android:textColor="@android:color/holo_orange_dark"
+            android:textSize="40sp"
+            app:layout_constraintTop_toBottomOf="@+id/aswitch" />
+
+
+    </LinearLayout>
+
 
     <Spinner
         android:id="@+id/foodcourt"
         style="@style/spinner_style"
         android:layout_width="match_parent"
-        android:layout_height="47dp"
-        android:layout_centerVertical="true"
+        android:layout_height="43dp"
         android:layout_marginEnd="45dp"
         android:layout_marginStart="45dp"
-        android:layout_marginTop="25dp"
-        android:paddingEnd="50dp"
-        android:paddingLeft="50dp"
+        android:layout_marginTop="45dp"
+        android:paddingStart="10dp"
         android:popupBackground="#ffffff"
         android:prompt="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.011"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aswitch" />
+        app:layout_constraintTop_toBottomOf="@+id/appName" />
 
     <Spinner
         android:id="@+id/username"
         style="@style/spinner_style"
         android:layout_width="match_parent"
         android:layout_height="47dp"
-        android:layout_centerVertical="true"
         android:layout_marginEnd="45dp"
         android:layout_marginStart="45dp"
-        android:layout_marginTop="25dp"
-        android:paddingEnd="50dp"
-        android:paddingLeft="50dp"
+        android:layout_marginTop="30dp"
+        android:paddingStart="10dp"
         android:popupBackground="#ffffff"
         android:prompt="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -145,12 +167,12 @@
         android:layout_height="47dp"
         android:layout_marginEnd="45dp"
         android:layout_marginStart="45dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:ems="10"
         android:fontFamily="@font/libre_baskerville"
         android:hint="Password"
         android:inputType="textPassword"
-        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
         android:textColorLink="@android:color/background_light"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -172,25 +194,26 @@
         android:textColor="@android:color/background_light"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.011"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passEditText" />
 
 
     <FrameLayout
         android:id="@+id/progressBarHolder"
-        android:animateLayoutChanges="true"
-        android:visibility="gone"
-        android:alpha="0.8"
-        android:background="#000000"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:alpha="0.8"
+        android:animateLayoutChanges="true"
+        android:background="#000000"
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_gravity="center"
             android:indeterminateTint="#ff8800"
             android:translationZ="2dp"
             android:visibility="visible"
@@ -198,7 +221,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_gravity="center"
             tools:visibility="visible" />
 
         <TextView
@@ -211,13 +233,14 @@
             android:textAlignment="center"
             android:textColor="@android:color/holo_orange_dark"
             android:textSize="24sp"
-            app:layout_constraintTop_toBottomOf="@+id/progressBar"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     </FrameLayout>
+
 
 </android.support.constraint.ConstraintLayout>
 
     <!--android:background="@drawable/background1"-->
     <!--style="@style/?android:attr/progressBarStyle"-->
     <!--style="@android:style/Widget.DeviceDefault.Light.ProgressBar"-->
+    <!--android:layout_centerVertical="true"-->

@@ -43,7 +43,8 @@ public class AddNewCategory extends AppCompatActivity {
     DocumentReference catRef;
     ArrayList<HashMap> category;
     HashMap<String, String> newcat;
-    String fcid;
+    String id = "";
+    String catid;
     String name;
     String sdesp;
     String ldesp;
@@ -65,7 +66,7 @@ public class AddNewCategory extends AppCompatActivity {
 
 
         // Initialization
-        getSupportActionBar().setTitle("Add New Category");
+        getSupportActionBar().setTitle("New Category");
 
         catNameEditText = findViewById(R.id.catNameEditText);
         catShortDespEditText = findViewById(R.id.catShortDespEditText);
@@ -79,26 +80,22 @@ public class AddNewCategory extends AppCompatActivity {
         outAnimation.setDuration(200);
         newcat = new HashMap<String, String>();
 
-        category = VenHome.categoryArr;
+//        category = VenHome.categoryArr;
 
-        int id = getCategoryId();
+        int no = getCategoryId();
 
-        fcid = VenHome.fcDetails.get("fcid") + "_CAT_" + id;
+        if(no < 10) {
+            id = "0" + no;
+        }else {
+            id = String.valueOf(no);
+        }
 
-        Toast.makeText(this, fcid, Toast.LENGTH_SHORT).show();
+        catid = VenHome.fcDetails.get("fcid") + "_CAT_" + id;
+
+        Toast.makeText(this, catid, Toast.LENGTH_SHORT).show();
 
         //Firebase
-        catRef = VenHome.vendorRef.collection("CategoryM").document(fcid);
-
-
-
-
-
-
-
-
-
-
+        catRef = VenHome.vendorRef.collection("CategoryM").document(catid);
 
 
 
@@ -109,7 +106,7 @@ public class AddNewCategory extends AppCompatActivity {
     private int getCategoryId() {
 
         if(VenHome.categoryArr.isEmpty()) {
-            return 0;
+            return 1;
         }
         ArrayList<HashMap> category = VenHome.categoryArr;
         HashMap<String, String> temporary;
@@ -162,7 +159,7 @@ public class AddNewCategory extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
 
                             Common.EnableProgressBar(progressBarHolder, inAnimation);
-                            newcat.put(CATID , fcid);
+                            newcat.put(CATID , catid);
                             newcat.put(BEGDA , "1/1/2017");
                             newcat.put(ENDDA , "12/31/9999");
                             newcat.put(VENID , VenHome.vendorDetails.get(VENID).toString());

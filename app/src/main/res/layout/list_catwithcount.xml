@@ -5,19 +5,33 @@
     android:layout_height="45dp"
     android:orientation="horizontal"
     android:padding="10dp"
+    android:weightSum="10"
     style="@style/expandableListView_style">
 
     <TextView
         android:id="@+id/lblListHeader"
-        android:layout_width="fill_parent"
+        android:layout_weight="8.5"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="@font/libre_baskerville"
-        android:paddingStart="25dp"
+        android:paddingStart="15dp"
         android:textAllCaps="false"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
 
+
+    <TextView
+        android:id="@+id/lblListHeaderCount"
+        android:layout_weight="1.5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/libre_baskerville"
+        android:paddingStart="5dp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:textSize="22sp" />
 
 </LinearLayout>
     <!--style="@style/expandableListView_style"-->

@@ -26,7 +26,7 @@
             android:paddingStart="10dp"
             android:text="Name"
             android:textColor="#848484"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/catNameEditText"
@@ -37,7 +37,7 @@
             android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa "
             android:layout_marginStart="10dp"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
 
@@ -60,7 +60,7 @@
             android:paddingStart="10dp"
             android:text="Short Description"
             android:textColor="#848484"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/catShortDespEditText"
@@ -71,7 +71,7 @@
             android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa "
             android:layout_marginStart="10dp"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
 
@@ -94,7 +94,7 @@
             android:paddingStart="10dp"
             android:text="Long Description"
             android:textColor="#848484"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/catLongDespEditText"
@@ -106,7 +106,7 @@
             android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa "
             android:layout_marginStart="10dp"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
 

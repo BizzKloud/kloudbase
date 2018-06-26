@@ -70,7 +70,6 @@ public class CategoryDetails extends AppCompatActivity {
 
 
         catDetailsListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
             @Override
             public void onGroupExpand(int groupPosition) {
 
@@ -102,8 +101,8 @@ public class CategoryDetails extends AppCompatActivity {
             Intent addNewCat = new Intent(CategoryDetails.this, AddNewCategory.class);
             startActivity(addNewCat);
         }else if(item.getItemId() == R.id.catPositioning) {
-            Intent catreorder = new Intent(CategoryDetails.this, CatOrganize.class);
-            startActivity(catreorder);
+            Intent catpositioning = new Intent(CategoryDetails.this, CatOrganize.class);
+            startActivity(catpositioning);
         }
 
 
@@ -119,8 +118,8 @@ public class CategoryDetails extends AppCompatActivity {
 
         // setting list adapter
         catDetailsAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChildLabel, listDataChildValue);
-        Log.i("RESUMED" , listDataChildValue.toString());
-        Log.i("RESUMED" , listDataHeader.toString());
+        Log.i("RESUMED CAtList" , listDataChildValue.toString());
+        Log.i("RESUMED CAtList" , listDataHeader.toString());
         catDetailsListView.setAdapter(catDetailsAdapter);
 
 

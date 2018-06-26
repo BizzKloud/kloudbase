@@ -18,16 +18,18 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
+            style="@style/logo_sytle"
             android:layout_height="0dp"
-            android:layout_weight="3">
+            android:layout_weight="3.2">
 
             <ImageView
                 android:id="@+id/venLogo"
+                style="@style/logo_sytle"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:layout_margin="3dp"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="5dp"
+                android:layout_alignParentTop="true"
                 android:background="@drawable/venlogo"
                 android:scaleType="fitXY"
                 android:visibility="visible"
@@ -61,19 +63,12 @@
 
         </RelativeLayout>
 
-        <View
-
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="10dp"
-            android:background="#000000" />
-
         <GridLayout
             android:id="@+id/grid"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="14dp"
-            android:layout_weight="6"
+            android:layout_weight="6.5"
             android:alignmentMode="alignMargins"
             android:columnCount="2"
             android:columnOrderPreserved="false"
@@ -86,6 +81,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
+                android:layout_marginTop="13dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -107,13 +103,12 @@
                         android:id="@id/mytax"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="15dp"
                         android:text="Tax Details"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="24sp"
                         android:textStyle="bold" />
-
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -123,14 +118,12 @@
                         android:weightSum="10"
                         app:layout_constraintTop_toBottomOf="@+id/mytax">
 
-
                         <ImageView
                             android:layout_width="0dp"
                             android:layout_height="fill_parent"
                             android:layout_gravity="center_horizontal"
                             android:layout_weight="5"
                             android:src="@drawable/tax" />
-
 
                         <TextView
                             android:id="@+id/textViewTaxCount"
@@ -140,9 +133,8 @@
                             android:gravity="center"
                             android:paddingRight="15dp"
                             android:text=""
-                            android:textAlignment="textEnd"
                             android:textColor="@color/common_google_signin_btn_text_light_focused"
-                            android:textSize="45sp"
+                            android:textSize="35sp"
                             android:textStyle="bold" />
 
                     </LinearLayout>
@@ -158,6 +150,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
+                android:layout_marginTop="13dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -172,35 +165,45 @@
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_margin="10dp"
                     android:orientation="vertical"
-                    android:weightSum="9">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="3"
-                        android:src="@drawable/cat" />
+                    app:layout_constraintTop_toBottomOf="@+id/mycat">
 
                     <TextView
+                        android:id="@id/mycat"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="15dp"
                         android:text="Categories"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/textViewCatCount"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:text=""
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:orientation="horizontal"
+                        android:weightSum="10"
+                        app:layout_constraintTop_toBottomOf="@+id/mycat">
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="5"
+                            android:src="@drawable/cat" />
+                        <TextView
+                            android:id="@+id/textViewCatCount"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="5"
+                            android:gravity="center"
+                            android:paddingRight="15dp"
+                            android:text=""
+                            android:textColor="@color/common_google_signin_btn_text_light_focused"
+                            android:textSize="35sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -213,6 +216,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_columnWeight="1"
+                android:layout_marginTop="13dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -223,39 +227,52 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:layout_margin="10dp"
                     android:orientation="vertical"
-                    android:weightSum="9">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="3"
-                        android:src="@drawable/fditem" />
-
+                    app:layout_constraintTop_toBottomOf="@+id/myfditem">
                     <TextView
+                        android:id="@id/myfditem"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="15dp"
                         android:text="Food Items"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/textViewFdItemCount"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:text=""
-                        android:textAlignment="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:orientation="horizontal"
+                        android:weightSum="10"
+                        app:layout_constraintTop_toBottomOf="@+id/myfditem">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="5"
+                            android:src="@drawable/fditem" />
+
+                        <TextView
+                            android:id="@+id/textViewFdItemCount"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="5"
+                            android:gravity="center"
+                            android:paddingRight="15dp"
+                            android:text=""
+                            android:textColor="@color/common_google_signin_btn_text_light_focused"
+                            android:textSize="35sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 

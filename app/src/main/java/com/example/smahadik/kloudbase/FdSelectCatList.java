@@ -3,18 +3,24 @@ package com.example.smahadik.kloudbase;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FdSelectCatList extends AppCompatActivity {
 
     ListView catListView;
-    ArrayList<String> catNamesArr;
-    ArrayAdapter<String> catArrAdapter;
+    ListAdapter listAdapter;
+//    ArrayList<String> catNamesArr;
+//    ArrayAdapter<String> catArrAdapter;
+
+    ArrayList<String> listDataHeader;
+    ArrayList<String> listDataHeaderCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +30,10 @@ public class FdSelectCatList extends AppCompatActivity {
 
         //Initializations
         catListView = findViewById(R.id.catListView);
-        catNamesArr = new ArrayList<String>();
-        catArrAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, catNamesArr);
-
-
-        // Adding child data
-        for (int i=0; i<VenHome.categoryArr.size(); i++) {
-            catNamesArr.add(VenHome.categoryArr.get(i).get("name").toString() + " - " + String.valueOf(VenHome.foodItemArr.get(i).size()));
-        }
-
-        catListView.setAdapter(catArrAdapter);
+//        catNamesArr = new ArrayList<String>();
+        listDataHeader = new ArrayList<String>();
+        listDataHeaderCount = new ArrayList<String>();
+//        catArrAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listDataHeader);
 
 
         catListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -45,5 +45,22 @@ public class FdSelectCatList extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.i("On Resume" , "At FD Select CAt List" );
+        // Adding child data
+        for (int i=0; i<VenHome.categoryArr.size(); i++) {
+            listDataHeader.add(VenHome.categoryArr.get(i).get("name").toString());
+            listDataHeaderCount.add(String.valueOf(VenHome.foodItemArr.get(i).size()));
+        }
+
+        listAdapter = new ListAdapter(this, listDataHeader , listDataHeaderCount);
+
+        catListView.setAdapter(listAdapter);
     }
 }

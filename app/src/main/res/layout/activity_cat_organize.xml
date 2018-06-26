@@ -6,7 +6,7 @@
     tools:context="com.example.smahadik.kloudbase.CatOrganize">
 
         <com.example.smahadik.kloudbase.DynamicListView
-            android:id="@+id/listview1"
+            android:id="@+id/listview"
             android:background="#0000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

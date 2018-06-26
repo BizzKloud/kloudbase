@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/addFdItem"
+        android:title="Add New Food Item" />
+    <!--app:showAsAction="always , never" />-->
+
+    <item
+        android:id="@+id/fdItemPositioning"
+        android:title="Food Item Positioning" />
+
+</menu>

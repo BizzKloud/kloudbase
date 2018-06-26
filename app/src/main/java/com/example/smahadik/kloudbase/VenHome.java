@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -66,7 +69,6 @@ public class VenHome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ven_home);
 
-
         Intent login = getIntent();
         String venName = login.getStringExtra("venName");
         String path = login.getStringExtra("db");
@@ -75,8 +77,7 @@ public class VenHome extends AppCompatActivity {
         fcDetails = (HashMap) login.getSerializableExtra("fc");
         vendorDetails.get("pic");
 
-//        getSupportActionBar().setTitle(venName);
-
+        getSupportActionBar().setTitle(fcDetails.get("name").toString());
 
         // FireStore Settings
         firestoreRef = FirebaseFirestore.getInstance();
@@ -113,17 +114,36 @@ public class VenHome extends AppCompatActivity {
         Glide.with(this).using(new FirebaseImageLoader()).load(storageRefLogo).into(venLogo);
 
 
-
-        //Setting basic terms
-//        textViewVenName.setText(venName);
-//        textViewfdname.setText(fdName);
-
-
         //Setting Card click listner
         setCardEvent();
 
 
     } //OnCreate Done
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater catMenu = getMenuInflater();
+        catMenu.inflate(R.menu.logout_menu, menu );
+        return true;
+//        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId() == R.id.logout) {
+            Intent loginLogout = new Intent(VenHome.this, login.class);
+            startActivity(loginLogout);
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void setCardEvent() {
         for(int i=0; i<grid.getChildCount(); i++) {
@@ -153,12 +173,12 @@ public class VenHome extends AppCompatActivity {
     }
 
 
-    private class AsysncTask extends AsyncTask<String , Void, Void> implements com.example.smahadik.kloudbase.GetFcAsysncTask {
+    private class AsysncTask extends AsyncTask<String , Void, Void> {
 
         @Override
         protected Void doInBackground(final String... strings) {
 
-            catPathRef.whereEqualTo("status" , true).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            catPathRef.whereEqualTo("status" , true).orderBy("catpos").addSnapshotListener(new EventListener<QuerySnapshot>() {
 
                 @Override
                 public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
@@ -182,7 +202,7 @@ public class VenHome extends AppCompatActivity {
 //                        final ArrayList<HashMap> sample = new ArrayList<HashMap>();
 
 
-                        fditem.whereEqualTo("status" , true).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        fditem.whereEqualTo("status" , true).orderBy("fspos").addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
