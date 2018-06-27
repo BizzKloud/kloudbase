@@ -282,6 +282,9 @@ public class AddNewFdItem extends AppCompatActivity {
             } else if(filePath == null) {
                 flag = true;
                 Toast.makeText(this, "Food Item Image Cannot be Empty", Toast.LENGTH_SHORT).show();
+            } else if (filePath == null) {
+                flag = true;
+                Toast.makeText(this, "Image cannot be empty", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -399,15 +402,7 @@ public class AddNewFdItem extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //dismissing the progress dialog
 
-                            //displaying success toast
-                            //creating the upload object to store uploaded image details
-//                            Upload upload = new Upload(editTextName.getText().toString().trim(), taskSnapshot.getDownloadUrl().toString());
-//
-//                            //adding an upload to firebase database
-//                            String uploadId = mDatabase.push().getKey();
-//                            mDatabase.child(uploadId).setValue(upload);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -426,8 +421,7 @@ public class AddNewFdItem extends AppCompatActivity {
                         }
                     });
         } else {
-            Toast.makeText(this, "Error Uploading Image Please try After Some Time", Toast.LENGTH_SHORT).show();
-            //display an error if no file is selected
+            Toast.makeText(this, "Image cannot be empty", Toast.LENGTH_SHORT).show();
         }
     }
 
