@@ -1,19 +1,16 @@
 package com.example.smahadik.kloudbase;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,31 +25,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
 
 public class login extends AppCompatActivity {
 
     // Firestore
-    FirebaseFirestore firestore;
-    CollectionReference db;
-    FirebaseAuth mAuth;
+    public static FirebaseFirestore firestore;
+    public static CollectionReference db;
+
 
     // Initialization
     ArrayList<HashMap> foodCourtArr = new ArrayList<HashMap>();
@@ -60,9 +52,12 @@ public class login extends AppCompatActivity {
     ArrayList<String> fcNames = new ArrayList<String>();
     ArrayList<String> userNames = new ArrayList<String>();
     String foodcourtsPath = "foodcourts";
-    String usersPath;
-    String fcid;
-    String venid;
+    public static String fcid;
+    public static String venid;
+    public  static String usersPath;
+    ArrayAdapter<String> adapterven;
+    ArrayAdapter<String> adapterfc;
+
     String passcode;
     Spinner foodcourtSpnr;
     Spinner usernameSpr;
@@ -71,11 +66,16 @@ public class login extends AppCompatActivity {
     Switch aswitch;
     TextView admin;
     TextView vendor;
+    int posVen;
+    int posfc;
+
+    ProgressDialog progressDialog;
+
     FrameLayout progressBarHolder;
     ProgressBar progressBar;
     AlphaAnimation inAnimation;
     AlphaAnimation outAnimation;
-    int pos;
+
 
 
     @Override
@@ -86,13 +86,9 @@ public class login extends AppCompatActivity {
 
         // FireStore Settings
         firestore = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder().setTimestampsInSnapshotsEnabled(true).build();
         firestore.setFirestoreSettings(settings);
         db = FirebaseFirestore.getInstance().collection("foodcourts");
-
-
 
 
         //Initialization
@@ -103,8 +99,15 @@ public class login extends AppCompatActivity {
         aswitch = (Switch) findViewById(R.id.aswitch);
         admin = (TextView) findViewById(R.id.admin);
         vendor = (TextView) findViewById(R.id.vendor);
+
+        progressDialog = new ProgressDialog(this);
+
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
+        inAnimation = new AlphaAnimation(0f, 1f);
+        inAnimation.setDuration(200);
+        outAnimation = new AlphaAnimation(1f, 0f);
+        outAnimation.setDuration(200);
 
 
         // getting data from firestore
@@ -122,10 +125,10 @@ public class login extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    initialRestart(admin, vendor);
+                    initialRestart(admin, vendor , true);
                 }else {
 
-                    initialRestart(vendor, admin);
+                    initialRestart(vendor, admin, false);
                 }
             }
         });
@@ -136,7 +139,7 @@ public class login extends AppCompatActivity {
 
         // Spinner
         fcNames.add("Select Food Court");
-        ArrayAdapter<String> adapterfc = new ArrayAdapter<String>(this, R.layout.spinner_item, fcNames);
+        adapterfc = new ArrayAdapter<String>(this, R.layout.spinner_item, fcNames);
         foodcourtSpnr.setAdapter(adapterfc);
 
         foodcourtSpnr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -158,6 +161,7 @@ public class login extends AppCompatActivity {
                     userNames.clear();
                     userNames.add("Select User Name");
                     usersArr.clear();
+                    posfc = position-1;
                     fcid = foodCourtArr.get(position-1).get("fcid").toString();
                     usersPath = foodcourtsPath + "/" + fcid +"/VendorM";
                     new AsysncTask().execute(usersPath);
@@ -172,7 +176,7 @@ public class login extends AppCompatActivity {
 
 
         userNames.add("Select User Name");
-        ArrayAdapter<String> adapterven = new ArrayAdapter<String>(this, R.layout.spinner_item, userNames);
+        adapterven = new ArrayAdapter<String>(this, R.layout.spinner_item, userNames);
         usernameSpr.setAdapter(adapterven);
 
         usernameSpr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -187,7 +191,7 @@ public class login extends AppCompatActivity {
                 }
                 if(position > 0) {
                     passEditText.setText("");
-                    pos = position-1;
+                    posVen = position-1;
                     venid = usersArr.get(position-1).get("venid").toString();
                     passcode = usersArr.get(position-1).get("pwd").toString();
                     passEditText.setEnabled(true);
@@ -211,6 +215,9 @@ public class login extends AppCompatActivity {
 
     // Set FoodCourts/Vendor Names
     public ArrayList<String> setnames(ArrayList<String> names, ArrayList<HashMap> hashmapArr) {
+        String name = names.get(0);
+        names.clear();
+        names.add(name);
         for (int i = 0; i < hashmapArr.size(); i++) {
             names.add(hashmapArr.get(i).get("name").toString());
         }
@@ -260,11 +267,19 @@ public class login extends AppCompatActivity {
 
 
     // Initial Restart For Switch
-    public void initialRestart (TextView checked, TextView unChecked) {
-        checked.setTextColor(Color.parseColor("#ffff8800"));
-        checked.setTextSize(22);
-        unChecked.setTextColor(Color.parseColor("#aaaaaa"));
-        unChecked.setTextSize(20);
+    public void initialRestart (TextView checked, TextView unChecked, boolean flag) {
+
+        if(flag) {
+            checked.setTextColor(Color.parseColor("#FF334774"));
+            checked.setTextSize(18);
+            unChecked.setTextColor(Color.parseColor("#aaaaaa"));
+            unChecked.setTextSize(14);
+        }else {
+            checked.setTextColor(Color.parseColor("#FFFF8800"));
+            checked.setTextSize(18);
+            unChecked.setTextColor(Color.parseColor("#aaaaaa"));
+            unChecked.setTextSize(14);
+        }
 
         passEditText.setEnabled(false);
         usernameSpr.setEnabled(false);
@@ -279,25 +294,20 @@ public class login extends AppCompatActivity {
 
 
     // AsyncTask FireStore
-    private class AsysncTask extends AsyncTask<String , Void, Void> implements com.example.smahadik.kloudbase.GetFcAsysncTask {
+    private class AsysncTask extends AsyncTask<String , Void, Void> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            inAnimation = new AlphaAnimation(0f, 1f);
-            inAnimation.setDuration(200);
-            progressBarHolder.setAnimation(inAnimation);
-            progressBarHolder.setVisibility(View.VISIBLE);
-            login.setEnabled(false);
-        }
-
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            EnableProgressBar();
+//            login.setEnabled(false);
+//        }
+//
 //        @Override
 //        protected void onPostExecute(Void aVoid) {
 //            super.onPostExecute(aVoid);
-//            outAnimation = new AlphaAnimation(1f, 0f);
-//            outAnimation.setDuration(200);
-//            progressBarHolder.setAnimation(outAnimation);
-//            progressBarHolder.setVisibility(View.GONE);
+//            DisableProgressBar();
+//            login.setEnabled(true);
 //        }
 
 
@@ -306,33 +316,38 @@ public class login extends AppCompatActivity {
 
             if(strings[0].contains("VendorM")) {
 
-                firestore.collection(strings[0]).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                firestore.collection(strings[0]).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for(QueryDocumentSnapshot document : task.getResult()) {
-                                usersArr.add((HashMap) document.getData() );
-                            }
-                            //Initiliaze
-                            userNames = setnames(userNames, usersArr);
-                            usernameSpr.setAdapter(initSpinner(userNames));
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                        usersArr.clear();
+                        for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            usersArr.add((HashMap) document.getData() );
                         }
+                        //Initiliaze
+                        userNames = setnames(userNames, usersArr);
+                        usernameSpr.setAdapter(initSpinner(userNames));
+                        adapterven.notifyDataSetChanged();
+
                     }
                 });
 
             }else {
-                db.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                db.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                foodCourtArr.add((HashMap) document.getData());
-                            }
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
-                            //Initialize
-                            fcNames = setnames(fcNames, foodCourtArr);
-                            foodcourtSpnr.setAdapter(initSpinner(fcNames));
+                        foodCourtArr.clear();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            foodCourtArr.add((HashMap) document.getData());
                         }
+
+                        //Initialize
+                        fcNames = setnames(fcNames, foodCourtArr);
+                        foodcourtSpnr.setAdapter(initSpinner(fcNames));
+                        adapterfc.notifyDataSetChanged();
+                        usernameSpr.setAdapter(initSpinner(userNames));
+                        adapterven.notifyDataSetChanged();
                     }
                 });
             }
@@ -342,33 +357,53 @@ public class login extends AppCompatActivity {
 
 
     //ONclick LOGIN
-    public void login (View view) {
+    public void loginAttempt (View view) {
 
-//        inAnimation = new AlphaAnimation(0f, 1f);
-//        inAnimation.setDuration(200);
-//        progressBarHolder.setAnimation(inAnimation);
-//        progressBar.setVisibility(View.VISIBLE);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//        Common.EnableProgressBar(progressBarHolder, inAnimation);
+        progressDialog.setMessage("Authenticating Credentials");
+        progressDialog.show();
 
+        login.setEnabled(false);
+        Log.i("Login" , "Clicked");
         String password = passEditText.getText().toString().trim();
-        if(foodcourtSpnr.getSelectedItem() == "Food Court") {
+        if(foodcourtSpnr.getSelectedItem() == "Select Food Court") {
+//            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            progressDialog.dismiss();
+            login.setEnabled(true);
             Toast.makeText(this, "Select 'FoodCourt' ", Toast.LENGTH_LONG).show();
-        }else if (usernameSpr.getSelectedItem() == "User Name") {
+        }
+        else if (usernameSpr.getSelectedItem() == "Select User Name") {
+//            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            progressDialog.dismiss();
+            login.setEnabled(true);
             Toast.makeText(this, "Select 'User Name' ", Toast.LENGTH_LONG).show();
-        }else if(password.equals("")) {
+        }
+        else if(password.equals("")) {
+//            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            progressDialog.dismiss();
+            login.setEnabled(true);
             Toast.makeText(this, "Enter Password", Toast.LENGTH_LONG).show();
-        }else {
+        }
+        else {
+
             if(password.equals(passcode)) {
-                Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
+                Log.i("Login" , "Clicked");
+//                Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
                 Intent venHome = new Intent(this, VenHome.class);
-                venHome.putExtra("fdName", foodcourtSpnr.getSelectedItem().toString());
+                venHome.putExtra("fc", foodCourtArr.get(posfc));
                 venHome.putExtra("venName", usernameSpr.getSelectedItem().toString());
                 venHome.putExtra("db" , usersPath + "/" + venid );
-                venHome.putExtra("vendorDetails" , usersArr.get(pos));
+                venHome.putExtra("vendorDetails" , usersArr.get(posVen));
+//                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                progressDialog.dismiss();
+                login.setEnabled(true);
                 startActivity(venHome);
                 finish();
 
             }else {
+//                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                progressDialog.dismiss();
+                login.setEnabled(true);
                 Toast.makeText(this, "Invalid Login Credentials", Toast.LENGTH_LONG).show();
             }
         }

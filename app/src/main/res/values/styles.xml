@@ -2,10 +2,33 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/libre_baskerville</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">#ff9d2d</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="colorControlNormal">@android:color/holo_orange_dark</item>-->
+        <item name="android:color">#ffff8800</item>
+        <item name="colorControlActivated">@color/bizzblue</item>
+        <item name="android:colorForeground">#ffff8800</item>
+        <!--<item name="android:colorControlHighlight">#ffff8800</item>-->
+    </style>
+
+    <style name="AppThemeTitle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/libre_baskerville</item>
+        <item name="colorPrimary">@android:color/holo_orange_dark</item>
+        <item name="colorPrimaryDark">#ff9d2d</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="android:textStyle">bold</item>-->
+        <item name="android:color">#ffff8800</item>
+        <item name="colorControlActivated">@color/bizzblue</item>
+        <!--<item name="android:colorForeground">#ffff8800</item>-->
+        <item name="android:colorControlHighlight">#ffff8800</item>
+        <item name="android:titleTextStyle">@style/toolbar_title_bold</item>
+    </style>
+
+    <style name="logo_sytle" >
+        <item name="android:background">@drawable/logo_style</item>
     </style>
 
     <style name="spinner_style">
@@ -17,17 +40,49 @@
         <item name="android:background">@drawable/gradient_password</item>
     </style>
 
-    <style name="button_style" >
-        <item name="android:background">@drawable/gradient_login</item>
-        <item name="android:colorBackground">#ffff8800</item>
+    <style name="login_button" >
+        <item name="android:background">@drawable/login_button</item>
+    </style>
+
+    <style name="edit_button" >
+        <item name="android:background">@drawable/edit_button</item>
+    </style>
+
+    <style name="delete_button" >
+        <item name="android:background">@drawable/delete_button</item>
+    </style>
+
+    <style name="titlebar_style" >
+        <item name="android:background">@android:color/holo_orange_dark</item>
+    </style>
+
+    <style name="expandableListView_style" >
+        <item name="android:background">@drawable/expandablelistview</item>
+    </style>
+
+    <style name="textLable_style" >
+        <item name="android:background" >@drawable/textlable</item>
+    </style>
+
+    <style name="textValue_style" >
+        <item name="android:background" >@drawable/textvalue</item>
+    </style>
+
+    <style name="cancel_button" >
+        <item name="android:background">@drawable/cancel_button</item>
+    </style>
+
+    <style name="save_button" >
+        <item name="android:background">@drawable/save_button</item>
     </style>
 
 
+    <style name="toolbar_title_bold"  parent="Theme.AppCompat.DayNight.DarkActionBar" >
+         <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
 </resources>
-<!--<item name="android:layout_height">35dp</item>-->
-<!--<item name="android:layout_margin">10dp</item>-->
-<!--<item name="android:paddingLeft">8dp</item>-->
-<!--<item name="android:paddingRight">20dp</item>-->
-<!--<item name="android:paddingTop">5dp</item>-->
-<!--<item name="android:paddingBottom">5dp</item>-->
+
+
+    <!--@font/open_sans_light , @font/libre_baskerville-->
