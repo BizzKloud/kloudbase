@@ -89,11 +89,15 @@
 
     <LinearLayout
         android:id="@+id/appName"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="470dp"
         android:layout_marginTop="40dp"
         android:weightSum="2"
-        app:layout_constraintTop_toBottomOf="@+id/aswitch">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarHolder">
 
 
         <TextView
@@ -202,11 +206,16 @@
     <FrameLayout
         android:id="@+id/progressBarHolder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="82dp"
         android:alpha="0.8"
         android:animateLayoutChanges="true"
         android:background="#000000"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/appName"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
             android:id="@+id/progressBar"

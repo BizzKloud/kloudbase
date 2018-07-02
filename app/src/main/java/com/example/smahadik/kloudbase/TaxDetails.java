@@ -1,6 +1,7 @@
 package com.example.smahadik.kloudbase;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -47,6 +48,8 @@ public class TaxDetails extends AppCompatActivity {
     int previousGroup = -1;
     Intent editTaxDetails;
 
+    ProgressDialog progressDialog;
+
     FrameLayout progressBarHolder;
     ProgressBar progressBar;
     AlphaAnimation inAnimation;
@@ -59,6 +62,8 @@ public class TaxDetails extends AppCompatActivity {
         setContentView(R.layout.activity_tax_details);
 
         //Initialization
+        progressDialog = new ProgressDialog(this);
+
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
         progressBar = findViewById(R.id.progressBar);
         inAnimation = new AlphaAnimation(0f, 1f);
@@ -129,13 +134,16 @@ public class TaxDetails extends AppCompatActivity {
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        Common.EnableProgressBar(progressBarHolder, inAnimation);
+//                        Common.EnableProgressBar(progressBarHolder, inAnimation);
+                        progressDialog.setMessage("Deleting " + listDataHeader.get(previousGroup));
+                        progressDialog.show();
 
                         DocumentReference catDoc = VenHome.taxMRef.document(VenHome.taxArr.get(previousGroup).get("taxid").toString());
                         catDoc.update(STATUS, false).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Common.DisableProgressBar(progressBarHolder, outAnimation);
+//                                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                                progressDialog.dismiss();
                                 onResume();
                             }
                         });
@@ -195,7 +203,6 @@ public class TaxDetails extends AppCompatActivity {
 
 
     }
-
 
 
 

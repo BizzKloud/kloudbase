@@ -22,18 +22,45 @@
             android:layout_height="0dp"
             android:layout_weight="3.2">
 
-            <ImageView
-                android:id="@+id/venLogo"
-                style="@style/logo_sytle"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_margin="3dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:background="@drawable/venlogo"
-                android:scaleType="fitXY"
-                android:visibility="visible"
-                app:srcCompat="@mipmap/ic_launcher" />
+            <FrameLayout
+                android:id="@+id/progressBarHolder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:alpha="0.8"
+                android:animateLayoutChanges="true"
+                android:visibility="visible">
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="#ff8800"
+                    android:translationZ="2dp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/venLogo"
+                    style="@style/logo_sytle"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="3dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/venlogo"
+                    android:scaleType="fitXY"
+                    android:visibility="visible"
+                    app:srcCompat="@mipmap/ic_launcher" />
+
+            </FrameLayout>
+
 
 
             <!--<TextView-->
@@ -104,10 +131,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="15dp"
+                        android:gravity="center_horizontal"
                         android:text="Tax Details"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
-                        android:textSize="24sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <LinearLayout
@@ -172,10 +200,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="15dp"
+                        android:gravity="center_horizontal"
                         android:text="Categories"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
-                        android:textSize="24sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <LinearLayout
@@ -232,15 +261,17 @@
                     android:layout_margin="10dp"
                     android:orientation="vertical"
                     app:layout_constraintTop_toBottomOf="@+id/myfditem">
+
                     <TextView
                         android:id="@id/myfditem"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="15dp"
+                        android:gravity="center_horizontal"
                         android:text="Food Items"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
-                        android:textSize="24sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <LinearLayout

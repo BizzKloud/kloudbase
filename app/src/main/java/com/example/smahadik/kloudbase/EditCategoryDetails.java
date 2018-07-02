@@ -1,5 +1,6 @@
 package com.example.smahadik.kloudbase;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -13,10 +14,13 @@ import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+
+import java.util.Objects;
 
 public class EditCategoryDetails extends AppCompatActivity {
 
@@ -24,6 +28,8 @@ public class EditCategoryDetails extends AppCompatActivity {
     EditText catShortDespEditText;
     EditText catLongDespEditText;
     DocumentReference catCurrentDoc;
+
+    ProgressDialog progressDialog;
 
     FrameLayout progressBarHolder;
     ProgressBar progressBar;
@@ -49,6 +55,8 @@ public class EditCategoryDetails extends AppCompatActivity {
         catShortDespEditText = findViewById(R.id.catShortDespEditText);
         catLongDespEditText = findViewById(R.id.catLongDespEditText);
 
+        progressDialog = new ProgressDialog(this);
+
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
         progressBar = findViewById(R.id.progressBar);
         inAnimation = new AlphaAnimation(0f, 1f);
@@ -67,39 +75,61 @@ public class EditCategoryDetails extends AppCompatActivity {
 
     public void save(View view) {
 
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
+
+        boolean flag = false;
+        final Double tax;
+
+        if (Objects.equals(catNameEditText.getText().toString().trim(), "")) {
+            flag = true;
+            Toast.makeText(this, "Name cannot be Empty", Toast.LENGTH_SHORT).show();
+        } else if (Objects.equals(catShortDespEditText.getText().toString().trim(), "")) {
+            flag = true;
+            Toast.makeText(this, "Short Description cannot be Empty", Toast.LENGTH_SHORT).show();
+        } else if (Objects.equals(catLongDespEditText.getText().toString().trim(), "")) {
+            flag = true;
+            Toast.makeText(this, "Long Description cannot be Empty", Toast.LENGTH_SHORT).show();
         }
-        builder.setTitle("Save entry")
-                .setMessage("Are you sure you want to Save the Changes ?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Common.EnableProgressBar(progressBarHolder, inAnimation);
-                        catCurrentDoc.update("name", catNameEditText.getText().toString().trim());
-                        catCurrentDoc.update("sdesp", catShortDespEditText.getText().toString().trim());
-                        catCurrentDoc.update("ldesp", catLongDespEditText.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.i("Finish", "Updates Done");
-                                Common.DisableProgressBar(progressBarHolder, outAnimation);
-                                finish();
-                            }
-                        });
 
-                        // continue with delete
-                    }
-                })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
 
+        if (!flag) {
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(this);
+            }
+            builder.setTitle("Save entry")
+                    .setMessage("Are you sure you want to Save the Changes ?")
+                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+//                            Common.EnableProgressBar(progressBarHolder, inAnimation);
+                            progressDialog.setMessage("Updating Category Details ");
+                            progressDialog.show();
+                            catCurrentDoc.update("name", catNameEditText.getText().toString().toUpperCase().trim());
+                            catCurrentDoc.update("sdesp", catShortDespEditText.getText().toString().toUpperCase().trim());
+                            catCurrentDoc.update("ldesp", catLongDespEditText.getText().toString().toUpperCase().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Log.i("Finish", "Updates Done");
+//                                    Common.DisableProgressBar(progressBarHolder, outAnimation);
+                                    progressDialog.dismiss();
+                                    finish();
+                                }
+                            });
+
+                            // continue with delete
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+
+        }
     }
 
 

@@ -1,15 +1,19 @@
 package com.example.smahadik.kloudbase;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +39,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,11 +88,14 @@ public class AddNewFdItem extends AppCompatActivity {
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     private Uri filePath;
     ProgressDialog progressDialog;
+    Bitmap bitmap;
 
-    FrameLayout progressBarHolder;
     ProgressBar progressBar;
-    AlphaAnimation inAnimation;
-    AlphaAnimation outAnimation;
+
+//    FrameLayout progressBarHolder;
+//    ProgressBar progressBar;
+//    AlphaAnimation inAnimation;
+//    AlphaAnimation outAnimation;
 
 
     @Override
@@ -110,13 +118,15 @@ public class AddNewFdItem extends AppCompatActivity {
         fdItemLongDespEditText = findViewById(R.id.fdItemLongDespEditText);
         fdItemratingsEditText = findViewById(R.id.fdItemratingsEditText);
         fdimage = findViewById(R.id.fdimage);
-
-        progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
         progressBar = findViewById(R.id.progressBar);
-        inAnimation = new AlphaAnimation(0f, 1f);
-        inAnimation.setDuration(200);
-        outAnimation = new AlphaAnimation(1f, 0f);
-        outAnimation.setDuration(200);
+
+
+//        progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
+//        progressBar = findViewById(R.id.progressBar);
+//        inAnimation = new AlphaAnimation(0f, 1f);
+//        inAnimation.setDuration(200);
+//        outAnimation = new AlphaAnimation(1f, 0f);
+//        outAnimation.setDuration(200);
         progressDialog = new ProgressDialog(this);
 
         newFdItem = new HashMap<String, String>();
@@ -141,7 +151,7 @@ public class AddNewFdItem extends AppCompatActivity {
 //        fdid = VenHome.fcDetails.get("fcid") + "_VEN_" + venidno[venidno.length-1] + "_MENU_" + id;
         fdid = venid + "_MENU_" + id;
 
-        Toast.makeText(this, fdid, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, fdid, Toast.LENGTH_SHORT).show();
 
         fdItemcatEditText.setText(VenHome.categoryArr.get(FdItemDetails.position).get("name").toString());
 
@@ -163,13 +173,23 @@ public class AddNewFdItem extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(imageUploadOption[which].equals("Camera")) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_CAMERA);
+                    if (ContextCompat.checkSelfPermission(AddNewFdItem.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(AddNewFdItem.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+
+                    } else {
+                        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(cameraIntent, REQUEST_CAMERA);
+                    }
 
                 }else if(imageUploadOption[which].equals("Mobile Galery")) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");
-                    startActivityForResult(intent.createChooser(intent, "Select File"), SELECT_FILE);
+                    if (ContextCompat.checkSelfPermission(AddNewFdItem.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(AddNewFdItem.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, SELECT_FILE);
+
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
+                    }
 
                 }else if(imageUploadOption[which].equals("My Cloud Galary")) {
 
@@ -183,6 +203,32 @@ public class AddNewFdItem extends AppCompatActivity {
         uploadOption.show();
 
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, REQUEST_CAMERA);
+            } else {
+                Toast.makeText(this, "Camera Permission is needed to select Image from Galary", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == SELECT_FILE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Toast.makeText(this, "Galary permission granted", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
+            } else {
+                Toast.makeText(this, "Media Permission is needed to select Image from Galary", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 
 
     public String getFileExtension(Uri uri) {
@@ -201,13 +247,15 @@ public class AddNewFdItem extends AppCompatActivity {
 
             if(requestCode == REQUEST_CAMERA) {
                 Bundle bundle = data.getExtras();
-                final Bitmap bitmap = (Bitmap) bundle.get("data");
+                bitmap = (Bitmap) bundle.get("data");
                 fdimage.setImageBitmap(bitmap);
+                filePath = null;
 
             }else if(requestCode == SELECT_FILE) {
                 filePath = data.getData();
                 Uri selectedImageUri = data.getData();
                 fdimage.setImageURI(selectedImageUri);
+                bitmap = null;
             }
 
         }
@@ -230,17 +278,14 @@ public class AddNewFdItem extends AppCompatActivity {
                 int oneint = Integer.parseInt(one[one.length-1]);
 
                 if (zeroint > oneint) {
-
                     temporary = fdItem.get(d);
                     fdItem.set(d, fdItem.get(d + 1));
                     fdItem.set(d + 1, temporary);
-
                 }
             }
         }
         String [] no = fdItem.get(fdItem.size()-1).get("fdid").toString().split("_");
 //        Log.i("NEW id" , String.valueOf(id + 1));
-
         return Integer.parseInt(no[no.length-1]) + 1;
 
     }
@@ -279,12 +324,10 @@ public class AddNewFdItem extends AppCompatActivity {
             }else if (amount == 0) {
                 flag = true;
                 Toast.makeText(this, "Amount cannot be 0 (Zero)", Toast.LENGTH_SHORT).show();
-            } else if(filePath == null) {
+            }
+            else if(filePath == null && bitmap == null) {
                 flag = true;
                 Toast.makeText(this, "Food Item Image Cannot be Empty", Toast.LENGTH_SHORT).show();
-            } else if (filePath == null) {
-                flag = true;
-                Toast.makeText(this, "Image cannot be empty", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -304,7 +347,7 @@ public class AddNewFdItem extends AppCompatActivity {
                     .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
-                            progressDialog.setTitle("Adding Food Item");
+                            progressDialog.setMessage("Adding Food Item");
                             progressDialog.show();
 //                            Uploading Image
                             uploadFile();
@@ -398,21 +441,18 @@ public class AddNewFdItem extends AppCompatActivity {
             StorageReference sRef = VenHome.storageRef.child(pic);
 
             //adding the file to reference
-            sRef.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            sRef.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
+                    }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
                             progressDialog.dismiss();
                             Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             //displaying the upload progress
@@ -420,7 +460,42 @@ public class AddNewFdItem extends AppCompatActivity {
                             progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
                         }
                     });
-        } else {
+        } else if(bitmap != null) {
+            //getting the storage reference
+            pic = "Products/KloudKafe/"
+                    + VenHome.fcDetails.get("fcid").toString() + "/"
+                    + venid + "/"
+                    + VenHome.categoryArr.get(FdItemDetails.position).get("catid").toString() + "/"
+                    + fdid
+                    + ".jpg";
+
+            StorageReference sRef = VenHome.storageRef.child(pic);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            //adding the file to reference
+            sRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            //displaying the upload progress
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                    }
+            });
+        }else {
             Toast.makeText(this, "Image cannot be empty", Toast.LENGTH_SHORT).show();
         }
     }

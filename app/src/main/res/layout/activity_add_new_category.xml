@@ -34,7 +34,7 @@
             android:layout_height="0dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="7"
-            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa "
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
             android:layout_marginStart="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
@@ -68,7 +68,7 @@
             android:layout_height="0dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="7"
-            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa "
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
             android:layout_marginStart="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
@@ -98,12 +98,11 @@
 
         <EditText
             android:id="@+id/catLongDespEditText"
-            android:inputType="number"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="7"
-            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZa "
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
             android:layout_marginStart="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp" />

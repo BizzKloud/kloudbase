@@ -10,18 +10,16 @@ import android.widget.FrameLayout;
 
 public class Common {
 
-    public static void EnableProgressBar (FrameLayout progressBarHolder, AlphaAnimation inAnimation) {
-        progressBarHolder.setAnimation(inAnimation);
-        progressBarHolder.setVisibility(View.VISIBLE);
-
-    }
-
-    public static void DisableProgressBar(FrameLayout progressBarHolder, AlphaAnimation outAnimation) {
-        progressBarHolder.setAnimation(outAnimation);
-        progressBarHolder.setVisibility(View.INVISIBLE);
-    }
-
-
+//    public static void EnableProgressBar (FrameLayout progressBarHolder, AlphaAnimation inAnimation) {
+//        progressBarHolder.setAnimation(inAnimation);
+//        progressBarHolder.setVisibility(View.VISIBLE);
+//
+//    }
+//
+//    public static void DisableProgressBar(FrameLayout progressBarHolder, AlphaAnimation outAnimation) {
+//        progressBarHolder.setAnimation(outAnimation);
+//        progressBarHolder.setVisibility(View.INVISIBLE);
+//    }
 
 
 }

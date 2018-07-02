@@ -54,6 +54,9 @@ public class FdSelectCatList extends AppCompatActivity {
 
         Log.i("On Resume" , "At FD Select CAt List" );
         // Adding child data
+        listDataHeader.clear();
+        listDataHeaderCount.clear();
+
         for (int i=0; i<VenHome.categoryArr.size(); i++) {
             listDataHeader.add(VenHome.categoryArr.get(i).get("name").toString());
             listDataHeaderCount.add(String.valueOf(VenHome.foodItemArr.get(i).size()));

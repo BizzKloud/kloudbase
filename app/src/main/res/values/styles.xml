@@ -4,7 +4,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">@font/libre_baskerville</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">#ff9d2d</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--<item name="colorControlNormal">@android:color/holo_orange_dark</item>-->
         <item name="android:color">#ffff8800</item>
@@ -13,11 +13,11 @@
         <!--<item name="android:colorControlHighlight">#ffff8800</item>-->
     </style>
 
-    <style name="AppThemeTitle" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="AppThemeTitle" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="android:fontFamily">@font/libre_baskerville</item>
         <item name="colorPrimary">@android:color/holo_orange_dark</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">#ff9d2d</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--<item name="android:textStyle">bold</item>-->
         <item name="android:color">#ffff8800</item>

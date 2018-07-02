@@ -49,6 +49,8 @@ public class FdItemDetails extends AppCompatActivity {
     public static int previousGroup = -1;
     Intent editfdItemDetails;
 
+    ProgressDialog progressDialog;
+
     FrameLayout progressBarHolder;
     ProgressBar progressBar;
     AlphaAnimation inAnimation;
@@ -67,6 +69,8 @@ public class FdItemDetails extends AppCompatActivity {
 
 
         //Initialization
+        progressDialog = new ProgressDialog(this);
+
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
         progressBar = findViewById(R.id.progressBar);
         inAnimation = new AlphaAnimation(0f, 1f);
@@ -132,9 +136,10 @@ public class FdItemDetails extends AppCompatActivity {
 
         // setting list adapter
         fdItemDetailsAdapter = new ExpandableListAdapterFdItem(this, listDataHeader, listDataChildLabel, listDataChildValue);
-        Log.i("RESUMED" , listDataChildValue.toString());
-        Log.i("RESUMED" , listDataHeader.toString());
+        Log.i("RESUMED FDITEMDETAILS" , listDataChildValue.toString());
+        Log.i("RESUMED FDITEMDETAILS" , listDataHeader.toString());
         fdItemDetailsListView.setAdapter(fdItemDetailsAdapter);
+        fdItemDetailsAdapter.notifyDataSetChanged();
 
 
     };
@@ -162,13 +167,16 @@ public class FdItemDetails extends AppCompatActivity {
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        Common.EnableProgressBar(progressBarHolder, inAnimation);
+//                        Common.EnableProgressBar(progressBarHolder, inAnimation);
+                        progressDialog.setMessage("Deleting " + listDataHeader.get(previousGroup));
+                        progressDialog.show();
 
                         DocumentReference fdItemDoc = VenHome.catPathRef.document(VenHome.categoryArr.get(position).get("catid").toString() + "/MenuM/" + VenHome.foodItemArr.get(position).get(previousGroup).get("fdid").toString() );
                         fdItemDoc.update(STATUS , false).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Common.DisableProgressBar(progressBarHolder, outAnimation);
+//                                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                                progressDialog.dismiss();
                                 onResume();
                             }
                         });

@@ -11,9 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -70,10 +76,26 @@ public class ExpandableListAdapterFdItem extends BaseExpandableListAdapter {
             if (infalInflater != null) {
                 convertView = infalInflater.inflate(R.layout.list_item_with_image,parent, false);
                 ImageView fditemImage = convertView.findViewById(R.id.fdItem);
+                final ProgressBar progressBar = convertView.findViewById(R.id.progressBar);
+
 
                 String pic = VenHome.foodItemArr.get(FdItemDetails.position).get(FdItemDetails.previousGroup).get("pic").toString();
                 storageRefLogo = VenHome.storageRef.child(pic);
-                Glide.with(fditemImage.getContext()).using(new FirebaseImageLoader()).load(storageRefLogo).into(fditemImage);
+                Glide.with(fditemImage.getContext()).using(new FirebaseImageLoader()).load(storageRefLogo)
+                        .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                        .listener(new RequestListener<StorageReference, GlideDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, StorageReference model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, StorageReference model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                progressBar.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
+                        .into(fditemImage);
             }
         }else if(isLastChild){
             if (infalInflater != null) {

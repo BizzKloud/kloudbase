@@ -1,5 +1,6 @@
 package com.example.smahadik.kloudbase;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -49,6 +50,8 @@ public class AddNewCategory extends AppCompatActivity {
     String sdesp;
     String ldesp;
 
+    ProgressDialog progressDialog;
+
     FrameLayout progressBarHolder;
     ProgressBar progressBar;
     AlphaAnimation inAnimation;
@@ -72,6 +75,8 @@ public class AddNewCategory extends AppCompatActivity {
         catShortDespEditText = findViewById(R.id.catShortDespEditText);
         catLongDespEditText = findViewById(R.id.catLongDespEditText);
 
+        progressDialog = new ProgressDialog(this);
+
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
         progressBar = findViewById(R.id.progressBar);
         inAnimation = new AlphaAnimation(0f, 1f);
@@ -92,7 +97,7 @@ public class AddNewCategory extends AppCompatActivity {
 
         catid = VenHome.fcDetails.get("fcid") + "_CAT_" + id;
 
-        Toast.makeText(this, catid, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, catid, Toast.LENGTH_SHORT).show();
 
         //Firebase
         catRef = VenHome.vendorRef.collection("CategoryM").document(catid);
@@ -140,9 +145,9 @@ public class AddNewCategory extends AppCompatActivity {
 
     public void add(View view) {
 
-        name = catNameEditText.getText().toString().trim();
-        sdesp = catShortDespEditText.getText().toString().trim();
-        ldesp = catLongDespEditText.getText().toString().trim();
+        name = catNameEditText.getText().toString().toUpperCase().trim();
+        sdesp = catShortDespEditText.getText().toString().toUpperCase().trim();
+        ldesp = catLongDespEditText.getText().toString().toUpperCase().trim();
 
         if(name != "" && sdesp != "" && ldesp != "") {
 
@@ -158,7 +163,9 @@ public class AddNewCategory extends AppCompatActivity {
                     .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
-                            Common.EnableProgressBar(progressBarHolder, inAnimation);
+//                            Common.EnableProgressBar(progressBarHolder, inAnimation);
+                            progressDialog.setMessage("Adding New Category");
+                            progressDialog.show();
                             newcat.put(CATID , catid);
                             newcat.put(BEGDA , "1/1/2017");
                             newcat.put(ENDDA , "12/31/9999");
@@ -173,7 +180,8 @@ public class AddNewCategory extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Log.i("Finish", "Updates Done");
-                                    Common.DisableProgressBar(progressBarHolder, outAnimation);
+//                                    Common.DisableProgressBar(progressBarHolder, outAnimation);
+                                    progressDialog.dismiss();
                                     finish();
                                 }
                             });

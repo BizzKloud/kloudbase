@@ -1,9 +1,17 @@
 
 package com.example.smahadik.kloudbase;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -13,10 +21,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -29,6 +45,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.sql.DataSource;
 
 public class VenHome extends AppCompatActivity {
 
@@ -60,6 +78,11 @@ public class VenHome extends AppCompatActivity {
     int countFdItem = 0;
     boolean getCatIdVar = false;
     int index = 0;
+    boolean doubleBackToExitPressedOnce = false;
+
+    ProgressBar progressBar;
+
+
 
 
 
@@ -100,6 +123,7 @@ public class VenHome extends AppCompatActivity {
         textViewCatCount = (TextView) findViewById(R.id.textViewCatCount);
         textViewFdItemCount = (TextView) findViewById(R.id.textViewFdItemCount);
         venLogo = (ImageView) findViewById(R.id.venLogo);
+        progressBar = findViewById(R.id.progressBar);
         categoryArr = new ArrayList<HashMap>();
         taxArr = new ArrayList<HashMap>();
         foodItemArr = new ArrayList<ArrayList<HashMap>>();
@@ -111,7 +135,23 @@ public class VenHome extends AppCompatActivity {
         storageRef = storage.getReference();
         String pic = vendorDetails.get("pic").toString();
         storageRefLogo = storageRef.child(pic);
-        Glide.with(this).using(new FirebaseImageLoader()).load(storageRefLogo).into(venLogo);
+
+
+        Glide.with(this).using(new FirebaseImageLoader()).load(storageRefLogo)
+                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                .listener(new RequestListener<StorageReference, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, StorageReference model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, StorageReference model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(venLogo);
 
 
         //Setting Card click listner
@@ -136,9 +176,30 @@ public class VenHome extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if(item.getItemId() == R.id.logout) {
-            Intent loginLogout = new Intent(VenHome.this, login.class);
-            startActivity(loginLogout);
-            finish();
+
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(this);
+            }
+            builder.setTitle("Logout")
+                    .setMessage("Are you sure you want to Logout ?")
+                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent loginLogout = new Intent(VenHome.this, login.class);
+                            startActivity(loginLogout);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -277,6 +338,25 @@ public class VenHome extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
 
 
 

@@ -1,5 +1,6 @@
 package com.example.smahadik.kloudbase;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,13 +27,17 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.annotation.Nullable;
 
 public class login extends AppCompatActivity {
 
@@ -49,6 +55,8 @@ public class login extends AppCompatActivity {
     public static String fcid;
     public static String venid;
     public  static String usersPath;
+    ArrayAdapter<String> adapterven;
+    ArrayAdapter<String> adapterfc;
 
     String passcode;
     Spinner foodcourtSpnr;
@@ -58,19 +66,22 @@ public class login extends AppCompatActivity {
     Switch aswitch;
     TextView admin;
     TextView vendor;
+    int posVen;
+    int posfc;
+
+    ProgressDialog progressDialog;
+
     FrameLayout progressBarHolder;
     ProgressBar progressBar;
     AlphaAnimation inAnimation;
     AlphaAnimation outAnimation;
-    int posVen;
-    int posfc;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
 
         // FireStore Settings
@@ -88,6 +99,9 @@ public class login extends AppCompatActivity {
         aswitch = (Switch) findViewById(R.id.aswitch);
         admin = (TextView) findViewById(R.id.admin);
         vendor = (TextView) findViewById(R.id.vendor);
+
+        progressDialog = new ProgressDialog(this);
+
         progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
         progressBar = findViewById(R.id.progressBar);
         inAnimation = new AlphaAnimation(0f, 1f);
@@ -125,7 +139,7 @@ public class login extends AppCompatActivity {
 
         // Spinner
         fcNames.add("Select Food Court");
-        ArrayAdapter<String> adapterfc = new ArrayAdapter<String>(this, R.layout.spinner_item, fcNames);
+        adapterfc = new ArrayAdapter<String>(this, R.layout.spinner_item, fcNames);
         foodcourtSpnr.setAdapter(adapterfc);
 
         foodcourtSpnr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -162,7 +176,7 @@ public class login extends AppCompatActivity {
 
 
         userNames.add("Select User Name");
-        ArrayAdapter<String> adapterven = new ArrayAdapter<String>(this, R.layout.spinner_item, userNames);
+        adapterven = new ArrayAdapter<String>(this, R.layout.spinner_item, userNames);
         usernameSpr.setAdapter(adapterven);
 
         usernameSpr.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -201,6 +215,9 @@ public class login extends AppCompatActivity {
 
     // Set FoodCourts/Vendor Names
     public ArrayList<String> setnames(ArrayList<String> names, ArrayList<HashMap> hashmapArr) {
+        String name = names.get(0);
+        names.clear();
+        names.add(name);
         for (int i = 0; i < hashmapArr.size(); i++) {
             names.add(hashmapArr.get(i).get("name").toString());
         }
@@ -299,33 +316,38 @@ public class login extends AppCompatActivity {
 
             if(strings[0].contains("VendorM")) {
 
-                firestore.collection(strings[0]).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                firestore.collection(strings[0]).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for(QueryDocumentSnapshot document : task.getResult()) {
-                                usersArr.add((HashMap) document.getData() );
-                            }
-                            //Initiliaze
-                            userNames = setnames(userNames, usersArr);
-                            usernameSpr.setAdapter(initSpinner(userNames));
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                        usersArr.clear();
+                        for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            usersArr.add((HashMap) document.getData() );
                         }
+                        //Initiliaze
+                        userNames = setnames(userNames, usersArr);
+                        usernameSpr.setAdapter(initSpinner(userNames));
+                        adapterven.notifyDataSetChanged();
+
                     }
                 });
 
             }else {
-                db.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                db.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                foodCourtArr.add((HashMap) document.getData());
-                            }
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
-                            //Initialize
-                            fcNames = setnames(fcNames, foodCourtArr);
-                            foodcourtSpnr.setAdapter(initSpinner(fcNames));
+                        foodCourtArr.clear();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            foodCourtArr.add((HashMap) document.getData());
                         }
+
+                        //Initialize
+                        fcNames = setnames(fcNames, foodCourtArr);
+                        foodcourtSpnr.setAdapter(initSpinner(fcNames));
+                        adapterfc.notifyDataSetChanged();
+                        usernameSpr.setAdapter(initSpinner(userNames));
+                        adapterven.notifyDataSetChanged();
                     }
                 });
             }
@@ -337,22 +359,28 @@ public class login extends AppCompatActivity {
     //ONclick LOGIN
     public void loginAttempt (View view) {
 
-        Common.EnableProgressBar(progressBarHolder, inAnimation);
+//        Common.EnableProgressBar(progressBarHolder, inAnimation);
+        progressDialog.setMessage("Authenticating Credentials");
+        progressDialog.show();
+
         login.setEnabled(false);
         Log.i("Login" , "Clicked");
         String password = passEditText.getText().toString().trim();
         if(foodcourtSpnr.getSelectedItem() == "Select Food Court") {
-            Common.DisableProgressBar(progressBarHolder, outAnimation);
+//            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            progressDialog.dismiss();
             login.setEnabled(true);
             Toast.makeText(this, "Select 'FoodCourt' ", Toast.LENGTH_LONG).show();
         }
         else if (usernameSpr.getSelectedItem() == "Select User Name") {
-            Common.DisableProgressBar(progressBarHolder, outAnimation);
+//            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            progressDialog.dismiss();
             login.setEnabled(true);
             Toast.makeText(this, "Select 'User Name' ", Toast.LENGTH_LONG).show();
         }
         else if(password.equals("")) {
-            Common.DisableProgressBar(progressBarHolder, outAnimation);
+//            Common.DisableProgressBar(progressBarHolder, outAnimation);
+            progressDialog.dismiss();
             login.setEnabled(true);
             Toast.makeText(this, "Enter Password", Toast.LENGTH_LONG).show();
         }
@@ -360,19 +388,21 @@ public class login extends AppCompatActivity {
 
             if(password.equals(passcode)) {
                 Log.i("Login" , "Clicked");
-                Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "Success", Toast.LENGTH_LONG).show();
                 Intent venHome = new Intent(this, VenHome.class);
                 venHome.putExtra("fc", foodCourtArr.get(posfc));
                 venHome.putExtra("venName", usernameSpr.getSelectedItem().toString());
                 venHome.putExtra("db" , usersPath + "/" + venid );
                 venHome.putExtra("vendorDetails" , usersArr.get(posVen));
-                Common.DisableProgressBar(progressBarHolder, outAnimation);
+//                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                progressDialog.dismiss();
                 login.setEnabled(true);
                 startActivity(venHome);
                 finish();
 
             }else {
-                Common.DisableProgressBar(progressBarHolder, outAnimation);
+//                Common.DisableProgressBar(progressBarHolder, outAnimation);
+                progressDialog.dismiss();
                 login.setEnabled(true);
                 Toast.makeText(this, "Invalid Login Credentials", Toast.LENGTH_LONG).show();
             }
